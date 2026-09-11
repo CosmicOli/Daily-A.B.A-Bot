@@ -5,32 +5,65 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# GLOBALS
 headers = {"User-Agent": os.getenv("USER_AGENT")}
-
-url = "https://x.com/EveryDayABA"
-requestForProfileHTML = requests.get(url, headers=headers)
-profileHTML = requestForProfileHTML.content.decode("utf-8") #open("aba.html", "wb").write(requestForProfileHTML.content)
-
+profileLink = "https://x.com/EveryDayABA"
 titleMatch = "Day \\d+ of A\\.B\\.A posting\\."
 ordinalMatch = "Day (\\d+) of A\\.B\\.A posting\\."
-
-ordinals = re.findall(ordinalMatch, profileHTML)
-
-splitProfile = zip(ordinals, re.split(titleMatch, profileHTML))
-
 postMatch = "data-href=\"/EveryDayABA/status/(\\d+)\""
 
-for ordinal, html in splitProfile:
-    postID = re.search(postMatch, html)
+def getHTMLFromLink(postLink):
+    requestForPostHTML = requests.get(postLink, headers=headers)
+    postHTML = requestForPostHTML.content.decode("utf-8")
+    return postHTML
+
+def getPostLinkFromHTML(profileHTML):
+    postID = re.search(postMatch, profileHTML)
     if postID:
         postLink = f"https://x.com/EveryDayABA/status/{postID.group(1)}"
-        requestForPostHTML = requests.get(postLink, headers=headers)
-        postHTML = requestForPostHTML.content
+    else:
+        postLink = None
+    return postLink
 
-        # The scraped site allows the image ID to be found, but then a format and size that seems to be standard is appended to the end of the link to get the image
-        imagePartialLink = re.search("src=\"(https://pbs.twimg.com/media/.{15}\\?format=).*?\"", postHTML.decode("utf-8"))
-        imageLink = imagePartialLink.group(1) + "jpg&name=4096x4096"
+def getImageLinkFromPostHTML(postHTML):
+    imagePartialLink = re.search("src=\"(https://pbs.twimg.com/media/.{15}\\?format=).*?\"", postHTML)
+    imageLink = imagePartialLink.group(1) + "jpg&name=4096x4096"
+    return imageLink
 
-        imageFile = open(f"Posts/{ordinal}.jpg", "wb")
-        imageFile.write(requests.get(imageLink, headers=headers).content)
-        imageFile.close()
+def downloadImageFromLink(format, imageLink, title):
+    imageFile = open(f"Posts/{title}.{format}", "wb")
+    imageFile.write(requests.get(imageLink, headers=headers).content)
+    imageFile.close()
+
+
+def downloadMostRecentPost():
+    profileHTML = getHTMLFromLink(profileLink)
+    ordinal = re.search(ordinalMatch, profileHTML).group(1)
+    postLink = getPostLinkFromHTML(profileHTML)
+
+    if postLink is None:
+        print("No post found.")
+        return
+    
+    postHTML = getHTMLFromLink(postLink)
+    imageLink = getImageLinkFromPostHTML(postHTML)
+    downloadImageFromLink("jpg", imageLink, ordinal)
+
+
+def downloadMostRecentPosts():
+    profileHTML = getHTMLFromLink(profileLink)
+    ordinals = re.findall(ordinalMatch, profileHTML)
+    splitProfile = zip(ordinals, re.split(titleMatch, profileHTML))
+
+    for ordinal, html in splitProfile:
+        postLink = getPostLinkFromHTML(html)
+
+        if postLink is None:
+            continue
+
+        postHTML = getHTMLFromLink(postLink)
+        imageLink = getImageLinkFromPostHTML(postHTML)
+        downloadImageFromLink("jpg", imageLink, ordinal)
+
+
+downloadMostRecentPosts()
