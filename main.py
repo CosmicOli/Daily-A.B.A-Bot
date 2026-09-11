@@ -5,8 +5,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+headers = {"User-Agent": os.getenv("USER_AGENT")}
+
 url = "https://x.com/EveryDayABA"
-requestForProfileHTML = requests.get(url, headers={"User-Agent":os.getenv("USER_AGENT")})
+requestForProfileHTML = requests.get(url, headers=headers)
 profileHTML = requestForProfileHTML.content.decode("utf-8") #open("aba.html", "wb").write(requestForProfileHTML.content)
 
 titleMatch = "Day \\d+ of A\\.B\\.A posting\\."
@@ -16,20 +18,19 @@ ordinals = re.findall(ordinalMatch, profileHTML)
 
 splitProfile = zip(ordinals, re.split(titleMatch, profileHTML))
 
-#print(list(splitProfile))  
-
-#print(len(list(splitProfile)))
-
 postMatch = "data-href=\"/EveryDayABA/status/(\\d+)\""
 
 for ordinal, html in splitProfile:
-    #print(ordinal)
-    #print(html)
-
     postID = re.search(postMatch, html)
     if postID:
-        print(f"Day {ordinal}: https://x.com/EveryDayABA/status/{postID.group(1)}")
+        postLink = f"https://x.com/EveryDayABA/status/{postID.group(1)}"
+        requestForPostHTML = requests.get(postLink, headers=headers)
+        postHTML = requestForPostHTML.content
 
-#currentPost = re.findall(match, profileHTML)
+        # The scraped site allows the image ID to be found, but then a format and size that seems to be standard is appended to the end of the link to get the image
+        imagePartialLink = re.search("src=\"(https://pbs.twimg.com/media/.{15}\\?format=).*?\"", postHTML.decode("utf-8"))
+        imageLink = imagePartialLink.group(1) + "jpg&name=4096x4096"
 
-#open("aba.txt", "w").write("\n".join(currentPost))
+        imageFile = open(f"Posts/{ordinal}.jpg", "wb")
+        imageFile.write(requests.get(imageLink, headers=headers).content)
+        imageFile.close()
