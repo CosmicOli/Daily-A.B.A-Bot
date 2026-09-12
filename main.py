@@ -5,7 +5,6 @@ import requests
 import discord
 from discord import app_commands
 from dotenv import load_dotenv
-from collections import OrderedDict
 
 load_dotenv()
 
@@ -14,10 +13,10 @@ intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-boundChannelsFile = "BoundChannels.txt"
+day = 0
+channels = []
 postTrackerFile = "PostTracker.csv"
 
-open(boundChannelsFile, "a").close()
 open(postTrackerFile, "a").close()
 
 # GLOBALS FOR TWITTER SCRAPING
@@ -68,7 +67,7 @@ def downloadImageFromLink(format, imageLink, title):
 
 
 def trackPost(ordinal, imageExists, link):
-    file = open(postTrackerFile, "r+")
+    file = open(postTrackerFile, "a+")
     file.write(f"{ordinal}, {imageExists}, {link}\n")
     file.close()
 
@@ -95,6 +94,7 @@ def downloadPostIfNotDownloaded(ordinal, postLink):
     flag = -1
     file = open(postTrackerFile, "r+")
     lines = file.readlines()
+    file.close()
     if (not any(re.search(ordinal,x) for x in lines)):
         flag = 0
         downloadPost(ordinal, postLink)
@@ -111,9 +111,7 @@ def downloadMostRecentPost():
     if postLink is None:
         return -1
 
-    downloadPostIfNotDownloaded(ordinal, postLink)
-
-    return ordinal
+    return downloadPostIfNotDownloaded(ordinal, postLink)
 
 
 def downloadMostRecentPosts():
@@ -122,6 +120,7 @@ def downloadMostRecentPosts():
     splitProfile = zip(ordinals, re.split(titleMatch, profileHTML))
 
     counter = 0
+    output = []
     for ordinal, html in splitProfile:
         postLink = getPostLinkFromHTML(html)
 
@@ -129,37 +128,62 @@ def downloadMostRecentPosts():
             continue
 
         counter += 1
-        downloadPostIfNotDownloaded(ordinal, postLink)
+        output.append(downloadPostIfNotDownloaded(ordinal, postLink))
 
     if (counter == 0):
         return -1
     else:
-        return list(OrderedDict.fromkeys(ordinals)) # Only want the list of unique ordinals, not all matches for the ordinals appearing in the html
+        return output
+
+
+def updateCurrentDay():
+    profileHTML = getHTMLFromLink(profileLink)
+    global day 
+    day = re.search(ordinalMatch, profileHTML).group(1)
+
+
+def getMostRecentPost():
+    file = open(postTrackerFile, "r")
+    lines = file.readlines()
+    file.close()
+
+    entry = next(x for x in lines if x.split(",")[0] == day).split(",")
+    print(entry)
 
 
 async def mainLoop():
-
     while True:
-        #currentOrdinal = downloadMostRecentPost()
-        #if ()
+        flag = downloadMostRecentPost()
+
+        if (flag == 0):
+            updateCurrentDay()
+
+            bodyFile = open(f"Posts/{day}.txt")
+            body = bodyFile.read()
+            bodyFile.close()
+
+            image = discord.File(f"Posts/{day}.jpg")
+
+            for channel in channels:
+                await channel.send(content=body, file=image)
+
         await asyncio.sleep(1800) # 30 minutes timer
 
-async def bindBotToChannel(channelID):
-    flag = -1
-    file = open(boundChannelsFile, "r+")
-    if (not any(re.search(channelID,x) for x in file.readlines())):
-        file.write(channelID + "\n")
-        flag = 0
-    file.close()
-    return flag
-
-@tree.command(description='Binds the bot to the current channel.', guild=discord.Object(id=1105583914044641370))
-async def bind(interaction):
-    flag = await bindBotToChannel(str(interaction.channel.id))
-    if (flag == 0):
-        await interaction.response.send_message(f"Bound to channel: {interaction.channel.name} (ID: {interaction.channel.id})")
+async def bindBotToChannel(channel):
+    if (not channel in channels):
+        channels.append(channel)
+        return 0
     else:
-        await interaction.response.send_message(f"Already bound to channel: {interaction.channel.name} (ID: {interaction.channel.id})")
+        return 1
+
+@tree.command(description='Binds the bot to the current channel or thread.', guild=discord.Object(id=1105583914044641370))
+async def bind(interaction):
+    flag = await bindBotToChannel(interaction.channel)
+    #flag = await bindBotToChannel(str(interaction.guild.id), str(interaction.channel.id))
+    if (flag == 0):
+        await interaction.response.send_message(f"Bound to channel: {interaction.channel.name} (ID: {interaction.channel.id}) in {interaction.guild.name} (ID: {interaction.guild.id})")
+    else:
+        await interaction.response.send_message(f"Already bound to channel: {interaction.channel.name} (ID: {interaction.channel.id}) in {interaction.guild.name} (ID: {interaction.guild.id})")
 
 @tree.command(description='Sends the most recent post.', guild=discord.Object(id=1105583914044641370))
 async def today(interaction):
@@ -169,7 +193,9 @@ async def today(interaction):
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user}")
-    print(f"Downloaded {len(downloadMostRecentPosts())} posts.")
+    print(f"Found {len(downloadMostRecentPosts())} posts for backlog.")
+    updateCurrentDay()
+    print(f"Day:{day}")
     await tree.sync(guild=discord.Object(id=1105583914044641370))
     asyncio.create_task(mainLoop())
     print("Ready")
