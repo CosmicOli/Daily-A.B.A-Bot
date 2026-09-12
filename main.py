@@ -18,6 +18,12 @@ channels = []
 postTrackerFile = "PostTracker.csv"
 open(postTrackerFile, "a").close()
 
+try:
+    os.mkdir("Posts")
+    print("Posts directory created")
+except FileExistsError:
+    print("Posts directory already exists")
+
 # GLOBALS FOR TWITTER SCRAPING
 headers = {"User-Agent": os.getenv("USER_AGENT")}
 profileLink = "https://x.com/EveryDayABA"
@@ -225,9 +231,9 @@ async def bindBotToChannel(channel: discord.channel):
 async def bind(interaction: discord.Interaction):
     flag = await bindBotToChannel(interaction.channel)
     if (flag == 0):
-        await interaction.response.send_message(f"Bound to channel: {interaction.channel.name} (ID: {interaction.channel.id}) in {interaction.guild.name} (ID: {interaction.guild.id})")
+        await interaction.response.send_message(f"Bound to channel #{interaction.channel.name} (ID: {interaction.channel.id}) in server {interaction.guild.name} (ID: {interaction.guild.id})")
     else:
-        await interaction.response.send_message(f"Already bound to channel: {interaction.channel.name} (ID: {interaction.channel.id}) in {interaction.guild.name} (ID: {interaction.guild.id})")
+        await interaction.response.send_message(f"Already bound to channel #{interaction.channel.name} (ID: {interaction.channel.id}) in server {interaction.guild.name} (ID: {interaction.guild.id})")
 
 
 @tree.command(name="today", description="Sends the most recent post.")
