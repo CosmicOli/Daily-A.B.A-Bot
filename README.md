@@ -1,7 +1,9 @@
 # Daily-A.B.A-Bot
 A simple discord bot for posting the daily A.B.A post from https://x.com/EveryDayABA
-
+  
 Uses the python library [requests](https://pypi.org/project/requests/) to web-scrape the most recent daily post.  
+  
+This was made not in association with @EveryDayABA
 
 # Information
 

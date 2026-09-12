@@ -165,14 +165,12 @@ def generateMessageContent(ordinal):
     if (not entry):
         return -1
 
-    # Imma be real this is kinda unneccesary cause discord.File would return None if it didn't exist but hey ho I didn't check that in advance
-    # Call it a security feature or something
     if (entry[1]):
         image = discord.File(f"Posts/{ordinal}.jpg")
     else:
         image = None
 
-    bodyFile = open(f"Posts/{day}.txt")
+    bodyFile = open(f"Posts/{ordinal}.txt")
     body = bodyFile.read()
     bodyFile.close()
 
@@ -198,7 +196,7 @@ async def sendPostToChannels(ordinal):
 
 async def mainLoop():
     while True:
-        await asyncio.sleep(10) # 30 minutes timer
+        await asyncio.sleep(1800) # 30 minutes timer
         flag = downloadMostRecentPost()
 
         if (flag == 0):
@@ -207,27 +205,7 @@ async def mainLoop():
             sendPostToChannels(day)
 
 
-async def bindBotToChannel(channel):
-    if (not channel in channels):
-        channels.append(channel)
-        return 0
-    else:
-        return 1
-
-
-@tree.command(description='Binds the bot to the current channel or thread.')
-async def bind(interaction):
-    flag = await bindBotToChannel(interaction.channel)
-    if (flag == 0):
-        await interaction.response.send_message(f"Bound to channel: {interaction.channel.name} (ID: {interaction.channel.id}) in {interaction.guild.name} (ID: {interaction.guild.id})")
-    else:
-        await interaction.response.send_message(f"Already bound to channel: {interaction.channel.name} (ID: {interaction.channel.id}) in {interaction.guild.name} (ID: {interaction.guild.id})")
-
-
-@tree.command(description='Sends the most recent post.')
-async def today(interaction):
-    content, image = generateMessageContent(day)
-
+async def respondWithPost(interaction: discord.Interaction, content: str, image: discord.File):
     removeEmbed = True
     if (image is None):
         removeEmbed = False
@@ -235,12 +213,46 @@ async def today(interaction):
     await interaction.response.send_message(content=content, file=image, suppress_embeds = removeEmbed)
 
 
+async def bindBotToChannel(channel: discord.channel):
+    if (not channel in channels):
+        channels.append(channel)
+        return 0
+    else:
+        return 1
+    
+
+@tree.command(description='Binds the bot to the current channel or thread.')
+async def bind(interaction: discord.Interaction):
+    flag = await bindBotToChannel(interaction.channel)
+    if (flag == 0):
+        await interaction.response.send_message(f"Bound to channel: {interaction.channel.name} (ID: {interaction.channel.id}) in {interaction.guild.name} (ID: {interaction.guild.id})")
+    else:
+        await interaction.response.send_message(f"Already bound to channel: {interaction.channel.name} (ID: {interaction.channel.id}) in {interaction.guild.name} (ID: {interaction.guild.id})")
+
+
+@tree.command(name="today", description="Sends the most recent post.")
+async def today(interaction: discord.Interaction):
+    content, image = generateMessageContent(day)
+    await respondWithPost(interaction, content, image)
+
+
+@tree.command(name="day", description="Sends a specified post, if it is cached by the bot")
+async def day(interaction: discord.Interaction, day: str):
+    entry = getPostTrackingEntry(day)
+    if (not entry):
+        await interaction.response.send_message(f"This bot instance has not cached day \"{day}\".")
+        return
+    
+    content, image = generateMessageContent(day)
+    await respondWithPost(interaction, content, image)
+
+
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user}")
     print(f"Found {len(downloadMostRecentPosts())} posts for backlog.")
     updateCurrentDay()
-    print(f"Day:{day}")
+    print(f"Current Day:{day}")
     await tree.sync()
     asyncio.create_task(mainLoop())
     print("Ready")
