@@ -68,15 +68,9 @@ def downloadImageFromLink(format, imageLink, title):
 
 
 def trackPost(ordinal, imageExists, link):
-    flag = -1
     file = open(postTrackerFile, "r+")
-    lines = file.readlines()
-    if (not any(re.search(ordinal,x) for x in lines)):
-        flag = 0
-        file.write(f"{ordinal}, {imageExists}, {link}\n")
-
+    file.write(f"{ordinal}, {imageExists}, {link}\n")
     file.close()
-    return flag
 
 
 def downloadPost(ordinal, postLink):
@@ -97,6 +91,18 @@ def downloadPost(ordinal, postLink):
     trackPost(ordinal, fileExists, imageLink)
 
 
+def downloadPostIfNotDownloaded(ordinal, postLink):
+    flag = -1
+    file = open(postTrackerFile, "r+")
+    lines = file.readlines()
+    if (not any(re.search(ordinal,x) for x in lines)):
+        flag = 0
+        downloadPost(ordinal, postLink)
+    else:
+        print(f"Post {ordinal} already downloaded, skipping")
+    return flag
+    
+
 def downloadMostRecentPost():
     profileHTML = getHTMLFromLink(profileLink)
     ordinal = re.search(ordinalMatch, profileHTML).group(1)
@@ -105,7 +111,7 @@ def downloadMostRecentPost():
     if postLink is None:
         return -1
 
-    downloadPost(ordinal, postLink)
+    downloadPostIfNotDownloaded(ordinal, postLink)
 
     return ordinal
 
@@ -115,15 +121,20 @@ def downloadMostRecentPosts():
     ordinals = re.findall(ordinalMatch, profileHTML)
     splitProfile = zip(ordinals, re.split(titleMatch, profileHTML))
 
+    counter = 0
     for ordinal, html in splitProfile:
         postLink = getPostLinkFromHTML(html)
 
         if postLink is None:
             continue
 
-        downloadPost(ordinal, postLink)
+        counter += 1
+        downloadPostIfNotDownloaded(ordinal, postLink)
 
-    return list(OrderedDict.fromkeys(ordinals)) # Only want the list of unique ordinals, not all matches for the ordinals appearing in the html
+    if (counter == 0):
+        return -1
+    else:
+        return list(OrderedDict.fromkeys(ordinals)) # Only want the list of unique ordinals, not all matches for the ordinals appearing in the html
 
 
 async def mainLoop():
