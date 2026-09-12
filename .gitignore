@@ -220,4 +220,6 @@ __marimo__/
 # Relevant
 *.jpg
 *.html
+*.txt
+PostTracker.csv
 BoundChannels.txt
