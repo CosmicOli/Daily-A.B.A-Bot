@@ -1,11 +1,19 @@
 import os
 import re
 import requests
+import discord
+from discord import app_commands
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# GLOBALS
+# GLOBALS FOR DISCORD BOT
+intents = discord.Intents.default()
+intents.message_content = True
+client = discord.Client(intents=intents)
+tree = app_commands.CommandTree(client)
+
+# GLOBALS FOR TWITTER SCRAPING
 headers = {"User-Agent": os.getenv("USER_AGENT")}
 profileLink = "https://x.com/EveryDayABA"
 titleMatch = "Day \\d+ of A\\.B\\.A posting\\."
@@ -42,7 +50,7 @@ def downloadMostRecentPost():
     postLink = getPostLinkFromHTML(profileHTML)
 
     if postLink is None:
-        print("No post found.")
+        print("No post found, defaulting to embed.")
         return
     
     postHTML = getHTMLFromLink(postLink)
@@ -65,5 +73,34 @@ def downloadMostRecentPosts():
         imageLink = getImageLinkFromPostHTML(postHTML)
         downloadImageFromLink("jpg", imageLink, ordinal)
 
+async def bindBotToChannel(channelID):
+    flag = -1
+    file = open("BoundChannels.txt", "r+")
+    if (not any(re.search(channelID,x) for x in file.readlines())):
+        file.write(channelID + "\n")
+        flag = 0
+    file.close()
+    return flag
 
-downloadMostRecentPosts()
+@tree.command(description='Binds the bot to the current channel.', guild=discord.Object(id=1105583914044641370))
+async def bind(interaction):
+    flag = await bindBotToChannel(str(interaction.channel.id))
+    if (flag == 0):
+        await interaction.response.send_message(f"Bound to channel: {interaction.channel.name} (ID: {interaction.channel.id})")
+    else:
+        await interaction.response.send_message(f"Already bound to channel: {interaction.channel.name} (ID: {interaction.channel.id})")
+
+@tree.command(description='Sends the most recent post.', guild=discord.Object(id=1105583914044641370))
+async def today(interaction):
+    await interaction.response.send_message(file=discord.File())
+
+    
+@client.event
+async def on_ready():
+    print(f"Logged in as {client.user}")
+    #downloadMostRecentPosts()
+    #print(f"Downloaded {len(os.listdir('Posts'))} posts.")
+    await tree.sync(guild=discord.Object(id=1105583914044641370))
+    print("Ready")
+
+client.run(os.getenv("DISCORD_TOKEN"))
