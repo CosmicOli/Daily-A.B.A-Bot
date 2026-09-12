@@ -178,6 +178,7 @@ def generateMessageContent(ordinal):
 
     return (body + "\n" + entry[2]), image
 
+
 async def sendMessageToChannel(channel, content, image):
     removeEmbed = True
     if (image is None):
@@ -186,12 +187,14 @@ async def sendMessageToChannel(channel, content, image):
     message = await channel.send(content=content, file=image)
     await message.edit(suppress=removeEmbed)
 
+
 async def sendPostToChannels(ordinal):
     content, image = generateMessageContent(ordinal)
 
     for channel in channels:
         await sendMessageToChannel(channel, content, image)
     return 0
+
 
 async def mainLoop():
     while True:
@@ -202,6 +205,7 @@ async def mainLoop():
             updateCurrentDay()
 
             sendPostToChannels(day)
+
 
 async def bindBotToChannel(channel):
     if (not channel in channels):
@@ -229,7 +233,6 @@ async def today(interaction):
         removeEmbed = False
     
     await interaction.response.send_message(content=content, file=image, suppress_embeds = removeEmbed)
-
 
 
 @client.event

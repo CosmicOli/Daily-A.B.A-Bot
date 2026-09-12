@@ -7,11 +7,13 @@ Uses the python library [requests](https://pypi.org/project/requests/) to web-sc
 
 Web scraping is used over the [X API](https://docs.x.com/x-api/introduction) or a proxy API to avoid the lack-of or small-number-of free number of requests.  
 This being said, caching of the images to disk is used to avoid any significant number of requests being sent.  
-
-# Plan
-Two halves  
--> twitter scraper  
--> -> does daily requests (or more likely hourly until a new post is detected)  
--> discord bot  
--> -> has a command to bind a new channel to post the daily post into  
--> -> upon a new post being detected by the twitter scraper, the bot will then send a message with the twitter post and content to each bound channel  
+  
+Posts are tracked in a file called PostTracker.csv.  
+If a post is untracked in PostTracker.csv, it does not matter if there is a file associated to a day as this file takes precident.  
+Each entry is in the format `day,image_found,link`  
+-> `day` refers to the current post day  
+-> `image_found` refers to whether an image was downloaded in association to the post  
+-> `link` refers to the link to the post  
+NOTE: `image_found` is potentially unimportant, however it exists as a failsafe in case not every image is a jpg (which it is unclear if twitter always converts photos into)  
+  
+Post image and body are stored in the format `day.jpg` and `day.txt` respectively.
