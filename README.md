@@ -18,4 +18,6 @@ Each entry is in the format `day,image_found,link`
 -> `link` refers to the link to the post  
 NOTE: `image_found` is potentially unimportant, however it exists as a failsafe in case not every image is a jpg (which it is unclear if twitter always converts photos into)  
   
-Post image and body are stored in the format `day.jpg` and `day.txt` respectively.
+Post image and body are stored in the format `day.jpg` and `day.txt` respectively.  
+These will be in a directory that is created upon first run, called `Posts`.  
+E.g. Day 250's image will be at `Posts/250.jpg`.

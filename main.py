@@ -15,6 +15,13 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 day = 0
 channels = []
+
+# GLOBALS FOR TWITTER SCRAPING
+headers = {"User-Agent": os.getenv("USER_AGENT")}
+profileLink = "https://x.com/EveryDayABA"
+titleMatch = "Day \\d+ of A\\.B\\.A posting\\."
+ordinalMatch = "Day (\\d+) of A\\.B\\.A posting\\."
+postMatch = "data-href=\"/EveryDayABA/status/(\\d+)\""
 postTrackerFile = "PostTracker.csv"
 open(postTrackerFile, "a").close()
 
@@ -24,12 +31,6 @@ try:
 except FileExistsError:
     print("Posts directory already exists")
 
-# GLOBALS FOR TWITTER SCRAPING
-headers = {"User-Agent": os.getenv("USER_AGENT")}
-profileLink = "https://x.com/EveryDayABA"
-titleMatch = "Day \\d+ of A\\.B\\.A posting\\."
-ordinalMatch = "Day (\\d+) of A\\.B\\.A posting\\."
-postMatch = "data-href=\"/EveryDayABA/status/(\\d+)\""
 
 
 def getHTMLFromLink(postLink):
@@ -208,7 +209,7 @@ async def mainLoop():
         if (flag == 0):
             updateCurrentDay()
 
-            sendPostToChannels(day)
+            await sendPostToChannels(day)
 
 
 async def respondWithPost(interaction: discord.Interaction, content: str, image: discord.File):
