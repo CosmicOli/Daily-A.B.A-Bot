@@ -8,10 +8,10 @@ import scraper.tracker as st
 
 @bg.tree.command(description='Binds the bot to the current channel or thread.')
 async def bind(interaction: discord.Interaction):
-    flag = await bu.bindToChannel(interaction.channel)
-    if (flag == 0):
+    try:
+        await bu.bindToChannel(interaction.channel)
         await interaction.response.send_message(f"Bound to channel '{interaction.channel.name}' (ID: {interaction.channel.id}) in server '{interaction.guild.name}' (ID: {interaction.guild.id})")
-    else:
+    except:
         await interaction.response.send_message(f"Already bound to channel '{interaction.channel.name}' (ID: {interaction.channel.id}) in server '{interaction.guild.name}' (ID: {interaction.guild.id})")
 
 

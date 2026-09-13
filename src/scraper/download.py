@@ -63,7 +63,7 @@ def downloadMostRecentPost():
     postLink = su.getPostLinkFromHTML(profileHTML)
 
     if postLink is None:
-        return -1
+        raise Exception("Failed to find a post")
 
     return downloadPostIfNotDownloaded(ordinal, postLink)
 
@@ -85,6 +85,6 @@ def downloadMostRecentPosts():
         output.append(downloadPostIfNotDownloaded(ordinal, postLink))
 
     if (counter == 0):
-        return -1
+        raise Exception("Failed to find any posts")
     else:
         return output
