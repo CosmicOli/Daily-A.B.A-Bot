@@ -7,16 +7,15 @@ import scraper.download as sd
 
 
 async def sendMessageToChannel(channel, content, image):
-    removeEmbed = True
     if (image is None):
-        removeEmbed = False
-
-    message = await channel.send(content=content, file=image)
-    await message.edit(suppress=removeEmbed)
+        message = await channel.send(content=content)
+    else:
+        message = await channel.send(content=content, file=image)
+        await message.edit(suppress=True)
 
 
 async def sendPostToChannels(ordinal):
-    content, image = bu.generateMessageContent(ordinal)
+    content, image = bu.generateMessageContentAndImage(ordinal)
 
     for channel in bg.channels:
         await sendMessageToChannel(channel, content, image)
@@ -24,12 +23,11 @@ async def sendPostToChannels(ordinal):
 
 
 async def respondWithPost(interaction: discord.Interaction, content: str, image: discord.File):
-    removeEmbed = True
     if (image is None):
-        removeEmbed = False
+        await interaction.response.send_message(content=content)
+    else:
+        await interaction.response.send_message(content=content, file=image, suppress_embeds = True)
     
-    await interaction.response.send_message(content=content, file=image, suppress_embeds = removeEmbed)
-
 
 async def mainLoop():
     while True:

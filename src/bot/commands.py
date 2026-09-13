@@ -17,7 +17,7 @@ async def bind(interaction: discord.Interaction):
 
 @bg.tree.command(name="today", description="Sends the most recent post.")
 async def today(interaction: discord.Interaction):
-    content, image = bu.generateMessageContent(bg.day)
+    content, image = bu.generateMessageContentAndImage(bg.day)
     await br.respondWithPost(interaction, content, image)
 
 
@@ -28,5 +28,5 @@ async def day(interaction: discord.Interaction, day: str):
         await interaction.response.send_message(f"This bot instance has not cached day '{day}'")
         return
     
-    content, image = bu.generateMessageContent(day)
+    content, image = bu.generateMessageContentAndImage(day)
     await br.respondWithPost(interaction, content, image)

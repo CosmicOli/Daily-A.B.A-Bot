@@ -12,19 +12,28 @@ def updateCurrentDay():
     bg.day = re.search(sg.ordinalMatch, profileHTML).group(1)
 
 
-def generateMessageContent(ordinal):
+def generateMessageContentAndImage(ordinal):
     entry = st.getPostTrackingEntry(ordinal)
     if (not entry):
         return -1
 
     if (entry[1]):
-        image = discord.File(f"Posts/{ordinal}.jpg")
+        try:
+            image = discord.File(f"Posts/{ordinal}.jpg")
+        except FileNotFoundError:
+            image = None
+            print(f"WARNING: image for {ordinal} missing when marked as found")
     else:
         image = None
 
-    bodyFile = open(f"Posts/{ordinal}.txt")
-    body = bodyFile.read()
-    bodyFile.close()
+    try:
+        bodyFile = open(f"Posts/{ordinal}.txt")
+        body = bodyFile.read()
+        bodyFile.close()
+    except FileNotFoundError:
+        body = ""
+        print(f"WARNING: body for {ordinal} missing while still tracked")
+        
 
     return (body + "\n" + entry[2]), image
 
