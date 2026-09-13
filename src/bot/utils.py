@@ -24,6 +24,7 @@ def generateMessageContent(ordinal, link):
         body = ""
         print(f"WARNING: body for {ordinal} missing while still tracked")
 
+    # As discord omits leading new line characters, no changes to this have to be made when body is an empty string
     return f"{body}\n{link}"
 
 
@@ -49,7 +50,6 @@ def generateMessageContentAndImage(ordinal):
 
     content = generateMessageContent(ordinal, entry[2])
 
-    # As discord omits leading new line characters, no changes to this have to be made when body is an empty string
     return content, image
 
 

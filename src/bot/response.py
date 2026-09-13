@@ -36,7 +36,7 @@ async def respondWithPost(interaction: discord.Interaction, content: str, image:
 
 async def mainLoop():
     while True:
-        await asyncio.sleep(10) # 30 minutes timer
+        await asyncio.sleep(1800) # 30 minutes timer
         try:
             flag = sd.downloadMostRecentPost()
         except:
@@ -48,10 +48,9 @@ async def mainLoop():
                 except:
                     print("UNABLE TO UPDATE CURRENT DAY IN MAIN LOOP")
 
-                await sendPostToChannels(bg.day)
- #               try:
-  #                  await sendPostToChannels(bg.day)
-   #             except Exception:
-    #                print("UNABLE TO SEND POST TO AT LEAST ONE CHANNEL IN MAIN LOOP")
+                try:
+                    await sendPostToChannels(bg.day)
+                except Exception:
+                    print("UNABLE TO SEND POST TO AT LEAST ONE CHANNEL IN MAIN LOOP")
 
 
