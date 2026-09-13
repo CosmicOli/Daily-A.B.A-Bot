@@ -19,7 +19,7 @@ def generateMessageContentAndImage(ordinal):
 
     if (entry[1]):
         try:
-            image = discord.File(f"Posts/{ordinal}.jpg")
+            image = discord.File(f"{sg.postsDirectory}{ordinal}.jpg")
         except FileNotFoundError:
             image = None
             print(f"WARNING: image for {ordinal} missing when marked as found")
@@ -27,14 +27,13 @@ def generateMessageContentAndImage(ordinal):
         image = None
 
     try:
-        bodyFile = open(f"Posts/{ordinal}.txt")
+        bodyFile = open(f"{sg.postsDirectory}{ordinal}.txt")
         body = bodyFile.read()
         bodyFile.close()
     except FileNotFoundError:
         body = ""
         print(f"WARNING: body for {ordinal} missing while still tracked")
         
-
     return (body + "\n" + entry[2]), image
 
 

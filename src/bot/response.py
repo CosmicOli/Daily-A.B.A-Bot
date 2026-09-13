@@ -19,7 +19,6 @@ async def sendPostToChannels(ordinal):
 
     for channel in bg.channels:
         await sendMessageToChannel(channel, content, image)
-    return 0
 
 
 async def respondWithPost(interaction: discord.Interaction, content: str, image: discord.File):

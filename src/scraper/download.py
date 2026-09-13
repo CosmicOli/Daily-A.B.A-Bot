@@ -7,7 +7,7 @@ import scraper.utils as su
 
 
 def downloadImageFromLink(format, imageLink, title):
-    imageFile = open(f"Posts/{title}.{format}", "wb")
+    imageFile = open(f"{sg.postsDirectory}{title}.{format}", "wb")
 
     request = requests.get(imageLink, headers=sg.headers)
 
@@ -18,14 +18,17 @@ def downloadImageFromLink(format, imageLink, title):
     imageFile.close()
     return 0
 
+
 def downloadPostBodyFromHTML(html, title):
     postBody = su.getBodyFromPostHTML(html)
-    body = open(f"Posts/{title}.txt", "w")
+    body = open(f"{sg.postsDirectory}{title}.txt", "w")
     body.write(postBody)
     body.close
 
+
 def downloadPostBodyFromLink(link, title):
     downloadPostBodyFromHTML(su.getHTMLFromLink(link), title)
+
 
 def downloadPost(ordinal, postLink):
     postHTML = su.getHTMLFromLink(postLink)
