@@ -1,3 +1,4 @@
+import html as h
 import re
 import requests
 
@@ -22,7 +23,7 @@ def downloadImageFromLink(format, imageLink, title):
 def downloadPostBodyFromHTML(html, title):
     postBody = su.getBodyFromPostHTML(html)
     body = open(f"{sg.postsDirectory}{title}.txt", "w")
-    body.write(postBody)
+    body.write(h.unescape(postBody))
     body.close
 
 
