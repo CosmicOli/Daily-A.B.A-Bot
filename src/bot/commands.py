@@ -15,6 +15,16 @@ async def bind(interaction: discord.Interaction):
         await interaction.response.send_message(f"Already bound to channel '{interaction.channel.name}' (ID: {interaction.channel.id}) in server '{interaction.guild.name}' (ID: {interaction.guild.id})")
 
 
+@bg.tree.command(description='Removes a binding of the bot from the current channel or thread.')
+async def unbind(interaction: discord.Interaction):
+    try:
+        await bu.unbindToChannel(interaction.channel)
+        await interaction.response.send_message(f"Unbound channel '{interaction.channel.name}' (ID: {interaction.channel.id}) in server '{interaction.guild.name}' (ID: {interaction.guild.id})")
+    except:
+        await interaction.response.send_message(f"Already unbound channel '{interaction.channel.name}' (ID: {interaction.channel.id}) in server '{interaction.guild.name}' (ID: {interaction.guild.id})")
+
+
+
 @bg.tree.command(name="today", description="Sends the most recent post.")
 async def today(interaction: discord.Interaction):
     content, image = bu.generateMessageContentAndImage(bg.day)
