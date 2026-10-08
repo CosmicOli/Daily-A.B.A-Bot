@@ -7,8 +7,7 @@ import scraper.tracker as st
 import scraper.utils as su
 
 
-def updateCurrentDay():
-    profileHTML = su.getHTMLFromLink(sg.profileLink)
+def updateCurrentDayFromProfileHTML(profileHTML):
     try:
         bg.day = re.search(sg.ordinalMatch, profileHTML).group(1)
     except:
@@ -17,7 +16,7 @@ def updateCurrentDay():
 
 def generateMessageContent(ordinal, link):
     try:
-        bodyFile = open(f"{sg.postsDirectory}{ordinal}.txt")
+        bodyFile = open(f"{sg.postsDirectory}{ordinal}.txt", encoding="utf-8")
         body = bodyFile.read()
         bodyFile.close()
     except FileNotFoundError:

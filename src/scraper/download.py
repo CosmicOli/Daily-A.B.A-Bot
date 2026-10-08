@@ -22,7 +22,7 @@ def downloadImageFromLink(format, imageLink, title):
 
 def downloadPostBodyFromHTML(html, title):
     postBody = su.getBodyFromPostHTML(html)
-    body = open(f"{sg.postsDirectory}{title}.txt", "w")
+    body = open(f"{sg.postsDirectory}{title}.txt", "w", encoding="utf-8")
     body.write(h.unescape(postBody))
     body.close
 
@@ -58,8 +58,7 @@ def downloadPostIfNotDownloaded(ordinal, postLink):
     return flag
 
 
-def downloadMostRecentPost():
-    profileHTML = su.getHTMLFromLink(sg.profileLink)
+def downloadMostRecentPostFromProfileHTML(profileHTML):
     ordinal = re.search(sg.ordinalMatch, profileHTML).group(1)
     postLink = su.getPostLinkFromHTML(profileHTML)
 
@@ -69,8 +68,7 @@ def downloadMostRecentPost():
     return downloadPostIfNotDownloaded(ordinal, postLink)
 
 
-def downloadMostRecentPosts():
-    profileHTML = su.getHTMLFromLink(sg.profileLink)
+def downloadMostRecentPostsFromProfileHTML(profileHTML):
     ordinals = re.findall(sg.ordinalMatch, profileHTML)
     splitProfile = zip(ordinals, re.split(sg.titleMatch, profileHTML))
 

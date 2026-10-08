@@ -4,8 +4,9 @@ import discord
 import bot.globals as bg
 import bot.utils as bu
 import scraper.download as sd
+import scraper.globals as sg
 import scraper.tracker as st
-
+import scraper.utils as su
 
 async def sendMessageToChannel(channel, content, image):
     if (image is None):
@@ -38,19 +39,24 @@ async def mainLoop():
     while True:
         await asyncio.sleep(1800) # 30 minutes timer
         try:
-            flag = sd.downloadMostRecentPost()
+            profileHTML = su.getHTMLFromLink(sg.profileLink)
         except:
-            print("A DOWNLOAD ERROR HAS OCCURED IN MAIN LOOP")
+            print("A PROFILEHTML REQUEST ERROR HAS OCCURED IN MAIN LOOP")
         else:
-            if (flag == 0):
-                try:
-                    bu.updateCurrentDay()
-                except:
-                    print("UNABLE TO UPDATE CURRENT DAY IN MAIN LOOP")
+            try:
+                flag = sd.downloadMostRecentPostFromProfileHTML(profileHTML)
+            except:
+                print("A DOWNLOAD ERROR HAS OCCURED IN MAIN LOOP")
+            else:
+                if (flag == 0):
+                    try:
+                        bu.updateCurrentDayFromProfileHTML(profileHTML)
+                    except:
+                        print("UNABLE TO UPDATE CURRENT DAY IN MAIN LOOP")
 
-                try:
-                    await sendPostToChannels(bg.day)
-                except Exception:
-                    print("UNABLE TO SEND POST TO AT LEAST ONE CHANNEL IN MAIN LOOP")
+                    try:
+                        await sendPostToChannels(bg.day)
+                    except Exception:
+                        print("UNABLE TO SEND POST TO AT LEAST ONE CHANNEL IN MAIN LOOP")
 
 
