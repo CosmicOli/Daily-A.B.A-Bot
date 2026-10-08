@@ -7,6 +7,7 @@ import bot.globals as bg
 import bot.utils as bu
 import scraper.globals as sg
 import scraper.tracker as st
+import scraper.utils as su
 
 testGroupName = "utils"
 
@@ -19,6 +20,7 @@ def reset():
     global testLink
     global content
     global image
+    global profileHTML
 
     testOrdinal = "test"
     testBody = "body"
@@ -26,6 +28,7 @@ def reset():
     testLink = "link"
     content = ""
     image = None
+    profileHTML = su.getHTMLFromLink(sg.profileLink)
     
 
 
@@ -36,7 +39,7 @@ reset()
 t.attemptTest(testGroupName, 1)
 
 bg.day = -1
-bu.updateCurrentDay()
+bu.updateCurrentDayFromProfileHTML(profileHTML)
 if (bg.day != -1):
     t.passTest(testGroupName, 1, f"day={bg.day}")
 else:
