@@ -56,9 +56,9 @@ try:
     bu.updateCurrentDayFromProfileHTML("")
 except Exception as e:
     if (str(e) == "Cannot find current day in profile HTML"):
-        t.passTest(testGroupName, 2, f"Exception thrown: {e}")
+        t.passTest(testGroupName, 2, f"Exception text={e}")
     else:
-        t.failTest(testGroupName, 2, f"Unexpected exception: {e}")
+        t.failTest(testGroupName, 2, f"Exception text={e}")
 else:
     t.failTest(testGroupName, 2, f"day={bg.day}, exception should have been thrown")
 
@@ -72,14 +72,17 @@ else:
 # The following tests still correctly test the entire functionality, just excessively so
 
 # Test 3: for generateMessageContentAndImage; checks if exception thrown when no entry found
-# Expects: an exception to be raised
+# Expects: an exception to be raised with the string "No entry associated with 'test'"
 reset()
 t.attemptTest(testGroupName, 3)
 
 try:
     content, image = bu.generateMessageContentAndImage(testOrdinal)
-except:
-    t.passTest(testGroupName, 3, "Exception thrown")
+except Exception as e:
+    if (str(e) == f"No entry associated with '{testOrdinal}'"):
+        t.passTest(testGroupName, 3, f"Exception text={e}")
+    else:
+        t.failTest(testGroupName, 3, f"Exception text={e}")
 else:
     t.failTest(testGroupName, 3, "Exception should have been raised")
 
