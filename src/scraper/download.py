@@ -48,14 +48,17 @@ def downloadPost(ordinal, postLink):
 
     downloadPostBodyFromHTML(postHTML, ordinal)
 
+    # NOTE: This throws an exception if the post is already tracked
     st.trackPost(ordinal, fileExists, postLink)
 
 
+# flag is 0 when a post is downloaded, or -1 when a post is already downloaded
 def downloadPostIfNotDownloaded(ordinal, postLink):
     flag = -1
     
     if (not st.getPostTrackingEntry(ordinal)):
         flag = 0
+        # NOTE: downloadPost throws an exception if the post being downloaded is already tracked
         downloadPost(ordinal, postLink)
         print(f"Post {ordinal} downloaded")
     else:
@@ -70,6 +73,7 @@ def downloadMostRecentPostFromProfileHTML(profileHTML):
     if postLink is None:
         raise Exception("Failed to find a post")
 
+    # NOTE: downloadPostIfNotDownloaded throws an exception if the post being downloaded is not already downloaded but is already tracked
     return downloadPostIfNotDownloaded(ordinal, postLink)
 
 
@@ -85,8 +89,13 @@ def downloadMostRecentPostsFromProfileHTML(profileHTML):
         if postLink is None:
             continue
 
-        counter += 1
-        output.append(downloadPostIfNotDownloaded(ordinal, postLink))
+        # This is handled as downloadPostIfNotDownloaded can throw an exception if the post is not already downloaded but is already tracked
+        try:    
+            output.append(downloadPostIfNotDownloaded(ordinal, postLink))
+        except Exception as e:
+            print(f"Exception thrown while downloading post {ordinal}: {e}")
+        else:     
+            counter += 1
 
     if (counter == 0):
         raise Exception("Failed to find any posts")

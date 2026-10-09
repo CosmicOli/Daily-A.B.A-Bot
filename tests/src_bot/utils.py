@@ -29,6 +29,14 @@ def reset():
     image = None
 
 
+# As st.trackPost can throw an exception, in most cases the test should fail if an exception is thrown
+# This function factors out handling the exception in every test where relevant
+def trackPost(testOrdinal, imageExists, link, testNumber):
+    try:
+        st.trackPost(testOrdinal, imageExists, link)
+    except Exception as e:
+        t.failTest(testGroupName, testNumber, f"Exception text={e}")
+
 # As bu.generateMessageContentAndImage can throw an exception, in most cases the test should fail if an exception is thrown
 # This function factors out handling the exception in every test where relevant
 def generateMessageContentAndImage(testOrdinal, testNumber):
@@ -102,7 +110,7 @@ else:
 reset()
 t.attemptTest(testGroupName, 4)
 
-st.trackPost(testOrdinal, False, testLink)
+trackPost(testOrdinal, False, testLink, 4)
 content, image = generateMessageContentAndImage(testOrdinal, 4)
 
 if (content == f"\n{testLink}" and image == None):
@@ -117,7 +125,7 @@ else:
 reset()
 t.attemptTest(testGroupName, 5)
 
-st.trackPost(testOrdinal, False, testLink)
+trackPost(testOrdinal, False, testLink, 5)
 content, image = generateMessageContentAndImage(testOrdinal, 5)
 
 if (content == f"\n{testLink}" and image == None):
@@ -135,7 +143,7 @@ testBodyFile = open(f"{sg.postsDirectory}{testOrdinal}.txt", "w")
 testBodyFile.write(testBody)
 testBodyFile.close()
 
-st.trackPost(testOrdinal, False, testLink)
+trackPost(testOrdinal, False, testLink, 6)
 content, image = generateMessageContentAndImage(testOrdinal, 6)
 
 if (content == f"{testBody}\n{testLink}" and image == None):
@@ -154,7 +162,7 @@ testBodyFile = open(f"{sg.postsDirectory}{testOrdinal}.txt", "w")
 testBodyFile.write(testBody)
 testBodyFile.close()
 
-st.trackPost(testOrdinal, True, testLink)
+trackPost(testOrdinal, True, testLink, 7)
 content, image = generateMessageContentAndImage(testOrdinal, 7)
 
 if (content == f"{testBody}\n{testLink}" and image == None):
@@ -170,7 +178,7 @@ t.attemptTest(testGroupName, 8)
 
 open(f"{sg.postsDirectory}{testOrdinal}.jpg", "w").close()
 
-st.trackPost(testOrdinal, False, testLink)
+trackPost(testOrdinal, False, testLink, 8)
 content, image = generateMessageContentAndImage(testOrdinal, 8)
 
 if (content == f"\n{testLink}" and image == None):
@@ -186,7 +194,7 @@ t.attemptTest(testGroupName, 9)
 
 open(f"{sg.postsDirectory}{testOrdinal}.jpg", "w").close()
 
-st.trackPost(testOrdinal, True, testLink)
+trackPost(testOrdinal, True, testLink, 9)
 content, image = generateMessageContentAndImage(testOrdinal, 9)
 
 if (content == f"\n{testLink}" and isinstance(image,discord.File)):
@@ -206,7 +214,7 @@ testBodyFile.close()
 
 open(f"{sg.postsDirectory}{testOrdinal}.jpg", "w").close()
 
-st.trackPost(testOrdinal, False, testLink)
+trackPost(testOrdinal, False, testLink, 10)
 content, image = generateMessageContentAndImage(testOrdinal, 10)
 
 if (content == f"{testBody}\n{testLink}" and image == None):
@@ -226,7 +234,7 @@ testBodyFile.close()
 
 open(f"{sg.postsDirectory}{testOrdinal}.jpg", "w").close()
 
-st.trackPost(testOrdinal, True, testLink)
+trackPost(testOrdinal, True, testLink, 11)
 content, image = generateMessageContentAndImage(testOrdinal, 11)
 
 if (content == f"{testBody}\n{testLink}" and isinstance(image,discord.File)):

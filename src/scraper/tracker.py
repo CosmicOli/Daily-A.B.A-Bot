@@ -18,7 +18,7 @@ def getPostTrackingEntry(ordinal):
 
 def trackPost(ordinal, imageExists, link):
     if (not getPostTrackingEntry(ordinal) is None):
-        raise Exception
+        raise Exception(f"Post already tracked for ordinal '{ordinal}'")
 
     file = open(sg.postTrackerFile, "a+")
     file.write(f"{ordinal},{imageExists},{link}\n")
