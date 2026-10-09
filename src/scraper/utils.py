@@ -1,3 +1,4 @@
+from html import unescape
 import re
 import requests
 
@@ -32,4 +33,4 @@ def getBodyFromPostHTML(postHTML):
     if (postBody is None):
         return None
     else:
-        return postBody.group(1)
+        return unescape(postBody.group(1))
