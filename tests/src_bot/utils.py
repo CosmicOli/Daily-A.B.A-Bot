@@ -27,7 +27,17 @@ def reset():
     testLink = "link"
     content = ""
     image = None
-    
+
+
+# As bu.generateMessageContentAndImage can throw an error, in most cases the test should fail if an error is thrown
+# This function factors out handling the error in every test where relevant
+def generateMessageContentAndImage(testOrdinal, testNumber):
+    try:
+        content, image = bu.generateMessageContentAndImage(testOrdinal)
+    except Exception as e:
+        t.failTest(testGroupName, testNumber, f"Exception text={e}")
+    else:
+        return content, image
 
 
 # Test 1: for updateCurrentDayFromProfileHTML; checks if current day updates
@@ -93,7 +103,7 @@ reset()
 t.attemptTest(testGroupName, 4)
 
 st.trackPost(testOrdinal, False, testLink)
-content, image = bu.generateMessageContentAndImage(testOrdinal)
+content, image = generateMessageContentAndImage(testOrdinal, 4)
 
 if (content == f"\n{testLink}" and image == None):
     t.passTest(testGroupName, 4, f"\ncontent='{content}'\nimage='{image}'")
@@ -108,7 +118,7 @@ reset()
 t.attemptTest(testGroupName, 5)
 
 st.trackPost(testOrdinal, False, testLink)
-content, image = bu.generateMessageContentAndImage(testOrdinal)
+content, image = generateMessageContentAndImage(testOrdinal, 5)
 
 if (content == f"\n{testLink}" and image == None):
     t.passTest(testGroupName, 5, f"\ncontent='{content}'\nimage='{image}'")
@@ -126,7 +136,7 @@ testBodyFile.write(testBody)
 testBodyFile.close()
 
 st.trackPost(testOrdinal, False, testLink)
-content, image = bu.generateMessageContentAndImage(testOrdinal)
+content, image = generateMessageContentAndImage(testOrdinal, 6)
 
 if (content == f"{testBody}\n{testLink}" and image == None):
     t.passTest(testGroupName, 6, f"\ncontent='{content}'\nimage='{image}'")
@@ -145,7 +155,7 @@ testBodyFile.write(testBody)
 testBodyFile.close()
 
 st.trackPost(testOrdinal, True, testLink)
-content, image = bu.generateMessageContentAndImage(testOrdinal)
+content, image = generateMessageContentAndImage(testOrdinal, 7)
 
 if (content == f"{testBody}\n{testLink}" and image == None):
     t.passTest(testGroupName, 7, f"\ncontent='{content}'\nimage='{image}'")
@@ -161,7 +171,7 @@ t.attemptTest(testGroupName, 8)
 open(f"{sg.postsDirectory}{testOrdinal}.jpg", "w").close()
 
 st.trackPost(testOrdinal, False, testLink)
-content, image = bu.generateMessageContentAndImage(testOrdinal)
+content, image = generateMessageContentAndImage(testOrdinal, 8)
 
 if (content == f"\n{testLink}" and image == None):
     t.passTest(testGroupName, 8, f"\ncontent='{content}'\nimage='{image}'")
@@ -177,7 +187,7 @@ t.attemptTest(testGroupName, 9)
 open(f"{sg.postsDirectory}{testOrdinal}.jpg", "w").close()
 
 st.trackPost(testOrdinal, True, testLink)
-content, image = bu.generateMessageContentAndImage(testOrdinal)
+content, image = generateMessageContentAndImage(testOrdinal, 9)
 
 if (content == f"\n{testLink}" and isinstance(image,discord.File)):
     t.passTest(testGroupName, 9, f"\ncontent='{content}'\nimage='{image}'")
@@ -197,7 +207,7 @@ testBodyFile.close()
 open(f"{sg.postsDirectory}{testOrdinal}.jpg", "w").close()
 
 st.trackPost(testOrdinal, False, testLink)
-content, image = bu.generateMessageContentAndImage(testOrdinal)
+content, image = generateMessageContentAndImage(testOrdinal, 10)
 
 if (content == f"{testBody}\n{testLink}" and image == None):
     t.passTest(testGroupName, 10, f"\ncontent='{content}'\nimage='{image}'")
@@ -217,7 +227,7 @@ testBodyFile.close()
 open(f"{sg.postsDirectory}{testOrdinal}.jpg", "w").close()
 
 st.trackPost(testOrdinal, True, testLink)
-content, image = bu.generateMessageContentAndImage(testOrdinal)
+content, image = generateMessageContentAndImage(testOrdinal, 11)
 
 if (content == f"{testBody}\n{testLink}" and isinstance(image,discord.File)):
     t.passTest(testGroupName, 11, f"\ncontent='{content}'\nimage='{image}'")
