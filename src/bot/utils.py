@@ -11,7 +11,7 @@ def updateCurrentDayFromProfileHTML(profileHTML):
     try:
         bg.day = re.search(sg.ordinalMatch, profileHTML).group(1)
     except:
-        raise Exception("Cannot find post to pull current day from")
+        raise Exception("Cannot find current day in profile HTML")
 
 
 def generateMessageContent(ordinal, link):

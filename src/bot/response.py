@@ -37,7 +37,7 @@ async def respondWithPost(interaction: discord.Interaction, content: str, image:
 
 async def mainLoop():
     while True:
-        await asyncio.sleep(10) # 30 minutes timer
+        await asyncio.sleep(1800) # 30 minutes timer
         try:
             profileHTML = su.getHTMLFromLink(sg.profileLink)
         except Exception as e:

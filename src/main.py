@@ -1,3 +1,5 @@
+import sys
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -30,8 +32,12 @@ async def on_ready():
     profileHTML = su.getHTMLFromLink(sg.profileLink)
     print(f"Found {len(sd.downloadMostRecentPostsFromProfileHTML(profileHTML))} posts for backlog.")
 
-    bu.updateCurrentDayFromProfileHTML(profileHTML)
-    print(f"Current Day:{bg.day}")
+    try:
+        bu.updateCurrentDayFromProfileHTML(profileHTML)
+        print(f"Current Day:{bg.day}")
+    except Exception as e:
+        print("UNABLE TO INITIALIZE CURRENT DAY: " + str(e))
+        sys.exit(-1)
 
     await bg.tree.sync()
 
