@@ -33,17 +33,20 @@ def downloadPost(ordinal, postLink):
     postHTML = su.getHTMLFromLink(postLink)
     imageLink = su.getImageLinkFromPostHTML(postHTML)
 
-    try:
-        downloadImageFromLink("jpg", imageLink, ordinal)
-    except Exception as e:
-        print(e)
+    if (imageLink is None):
         fileExists = False
+        print(f"Day {ordinal} image missing or in incorrect format")
     else:
-        if (imageLink is None):
+        # This try except is to catch if an incorrect html code response occurs
+        # Depending on which response occurs, it may be worth attempting to download the image again, but I felt this was overkill due to the unlikeliness of this occuring
+        # For now, the fact embeds become enabled when the image fails to download is a good enough band aid for this issue
+        try:
+            downloadImageFromLink("jpg", imageLink, ordinal)
+        except Exception as e:
+            print(e)
             fileExists = False
-            print(f"Day {ordinal} image missing or in incorrect format")
         else:
-            fileExists = True
+            fileExists = True     
 
     downloadPostBodyFromHTML(postHTML, ordinal)
 
