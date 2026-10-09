@@ -27,8 +27,13 @@ async def unbind(interaction: discord.Interaction):
 
 @bg.tree.command(name="today", description="Sends the most recent post.")
 async def today(interaction: discord.Interaction):
-    content, image = bu.generateMessageContentAndImage(bg.day)
-    await br.respondWithPost(interaction, content, image)
+    try:
+        content, image = bu.generateMessageContentAndImage(bg.day)
+    except Exception as e:
+        print(f"ERROR IN 'today' COMMAND: {e}")
+        await interaction.response.send_message("Failed to send today's post. Please contact the bot owner to report this issue.")
+    else:
+        await br.respondWithPost(interaction, content, image)
 
 
 @bg.tree.command(name="day", description="Sends a specified post, if it is cached by the bot")
@@ -37,6 +42,12 @@ async def day(interaction: discord.Interaction, day: str):
     if (not entry):
         await interaction.response.send_message(f"This bot instance has not cached day '{day}'")
         return
-    
-    content, image = bu.generateMessageContentAndImage(day)
-    await br.respondWithPost(interaction, content, image)
+
+    # On paper there shouldn't be a place for this to throw an error that isn't covered by the above check, but I felt it was probably worth doing this try except just in case
+    try:
+        content, image = bu.generateMessageContentAndImage(day)
+    except Exception as e:
+        print(f"ERROR IN 'day' COMMAND: {e}")
+        await interaction.response.send_message("Failed to send the requested post. Please contact the bot owner to report this issue.")
+    else:
+        await br.respondWithPost(interaction, content, image)

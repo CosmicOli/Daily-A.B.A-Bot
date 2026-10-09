@@ -30,7 +30,7 @@ def reset():
     
 
 
-# Test 1: for updateCurrentDay; checks if current day updates
+# Test 1: for updateCurrentDayFromProfileHTML; checks if current day updates
 # Expects: the day to change from -1 to 280
 reset()
 t.attemptTest(testGroupName, 1)
@@ -47,7 +47,7 @@ else:
         t.failTest(testGroupName, 1, f"day={bg.day}")
 
 
-# Test 2: for updateCurrentDay; checks if current day throws an error when no day is found
+# Test 2: for updateCurrentDayFromProfileHTML; checks if current day throws an error when no day is found
 # Expects: an exception to be raised with the string "Cannot find current day in profile HTML"
 reset()
 t.attemptTest(testGroupName, 2)
