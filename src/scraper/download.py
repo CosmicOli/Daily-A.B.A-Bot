@@ -11,8 +11,9 @@ def downloadImageFromLink(format, imageLink, title):
 
     request = requests.get(imageLink, headers=sg.headers)
 
+    # I know technically any code beginning with 2 is 'successful' but I expect a code of 200 and am gonna stick with that for now
     if (request.status_code != 200):
-        raise Exception(f"Image request failed with status code {request.status_code}")
+        raise Exception(f"Image request failed with status code '{request.status_code}'")
 
     imageFile.write(request.content)
     imageFile.close()
@@ -37,7 +38,7 @@ def downloadPost(ordinal, postLink):
         fileExists = False
         print(f"Day {ordinal} image missing or in incorrect format")
     else:
-        # This try except is to catch if an incorrect html code response occurs
+        # This try except is to catch if an incorrect http code response occurs
         # Depending on which response occurs, it may be worth attempting to download the image again, but I felt this was overkill due to the unlikeliness of this occuring
         # For now, the fact embeds become enabled when the image fails to download is a good enough band aid for this issue
         try:
