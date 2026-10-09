@@ -37,26 +37,26 @@ async def respondWithPost(interaction: discord.Interaction, content: str, image:
 
 async def mainLoop():
     while True:
-        await asyncio.sleep(1800) # 30 minutes timer
+        await asyncio.sleep(10) # 30 minutes timer
         try:
             profileHTML = su.getHTMLFromLink(sg.profileLink)
-        except:
-            print("A PROFILEHTML REQUEST ERROR HAS OCCURED IN MAIN LOOP")
+        except Exception as e:
+            print("A PROFILEHTML REQUEST ERROR HAS OCCURED IN MAIN LOOP: " + str(e))
         else:
             try:
                 flag = sd.downloadMostRecentPostFromProfileHTML(profileHTML)
-            except:
-                print("A DOWNLOAD ERROR HAS OCCURED IN MAIN LOOP")
+            except Exception as e:
+                print("A DOWNLOAD ERROR HAS OCCURED IN MAIN LOOP: " + str(e))
             else:
                 if (flag == 0):
                     try:
                         bu.updateCurrentDayFromProfileHTML(profileHTML)
-                    except:
-                        print("UNABLE TO UPDATE CURRENT DAY IN MAIN LOOP")
+                    except Exception as e:
+                        print("UNABLE TO UPDATE CURRENT DAY IN MAIN LOOP: " + str(e))
 
                     try:
                         await sendPostToChannels(bg.day)
-                    except Exception:
-                        print("UNABLE TO SEND POST TO AT LEAST ONE CHANNEL IN MAIN LOOP")
+                    except Exception as e:
+                        print("UNABLE TO SEND POST TO AT LEAST ONE CHANNEL IN MAIN LOOP: " + str(e))
 
 

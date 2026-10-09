@@ -56,11 +56,11 @@ async def bindToChannel(channel: discord.channel):
     if (not channel in bg.channels):
         bg.channels.append(channel)
     else:
-        raise Exception(f"Already bound to channel '{channel.name}' (ID: {channel.id})")
+        raise Exception(f"Already bound to channel '{channel.name}' (ID: {channel.id}) in server '{channel.guild.name}' (ID: {channel.guild.id})")
 
 
 async def unbindToChannel(channel: discord.channel):
     if (channel in bg.channels):
         bg.channels.remove(channel)
     else:
-        raise Exception(f"Already unbound to channel '{channel.name}' (ID: {channel.id})")
+        raise Exception(f"Already unbound channel '{channel.name}' (ID: {channel.id}) in server '{channel.guild.name}' (ID: {channel.guild.id})")

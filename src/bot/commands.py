@@ -11,8 +11,8 @@ async def bind(interaction: discord.Interaction):
     try:
         await bu.bindToChannel(interaction.channel)
         await interaction.response.send_message(f"Bound to channel '{interaction.channel.name}' (ID: {interaction.channel.id}) in server '{interaction.guild.name}' (ID: {interaction.guild.id})")
-    except:
-        await interaction.response.send_message(f"Already bound to channel '{interaction.channel.name}' (ID: {interaction.channel.id}) in server '{interaction.guild.name}' (ID: {interaction.guild.id})")
+    except Exception as e:
+        await interaction.response.send_message(e)
 
 
 @bg.tree.command(description='Removes a binding of the bot from the current channel or thread.')
@@ -20,8 +20,8 @@ async def unbind(interaction: discord.Interaction):
     try:
         await bu.unbindToChannel(interaction.channel)
         await interaction.response.send_message(f"Unbound channel '{interaction.channel.name}' (ID: {interaction.channel.id}) in server '{interaction.guild.name}' (ID: {interaction.guild.id})")
-    except:
-        await interaction.response.send_message(f"Already unbound channel '{interaction.channel.name}' (ID: {interaction.channel.id}) in server '{interaction.guild.name}' (ID: {interaction.guild.id})")
+    except Exception as e:
+        await interaction.response.send_message(e)
 
 
 

@@ -13,11 +13,10 @@ def downloadImageFromLink(format, imageLink, title):
     request = requests.get(imageLink, headers=sg.headers)
 
     if (request.status_code != 200):
-        return -1
+        raise Exception(f"Image request failed with status code {request.status_code}")
 
     imageFile.write(request.content)
     imageFile.close()
-    return 0
 
 
 def downloadPostBodyFromHTML(html, title):
@@ -35,11 +34,17 @@ def downloadPost(ordinal, postLink):
     postHTML = su.getHTMLFromLink(postLink)
     imageLink = su.getImageLinkFromPostHTML(postHTML)
 
-    if (downloadImageFromLink("jpg", imageLink, ordinal) == -1 or imageLink is None):
+    try:
+        downloadImageFromLink("jpg", imageLink, ordinal)
+    except Exception as e:
+        print(e)
         fileExists = False
-        print(f"Day {ordinal} image missing or in incorrect format")
     else:
-        fileExists = True
+        if (imageLink is None):
+            fileExists = False
+            print(f"Day {ordinal} image missing or in incorrect format")
+        else:
+            fileExists = True
 
     downloadPostBodyFromHTML(postHTML, ordinal)
 
