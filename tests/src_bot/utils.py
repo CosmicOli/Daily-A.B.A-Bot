@@ -29,8 +29,8 @@ def reset():
     image = None
 
 
-# As bu.generateMessageContentAndImage can throw an error, in most cases the test should fail if an error is thrown
-# This function factors out handling the error in every test where relevant
+# As bu.generateMessageContentAndImage can throw an exception, in most cases the test should fail if an exception is thrown
+# This function factors out handling the exception in every test where relevant
 def generateMessageContentAndImage(testOrdinal, testNumber):
     try:
         content, image = bu.generateMessageContentAndImage(testOrdinal)
@@ -57,7 +57,7 @@ else:
         t.failTest(testGroupName, 1, f"day={bg.day}")
 
 
-# Test 2: for updateCurrentDayFromProfileHTML; checks if current day throws an error when no day is found
+# Test 2: for updateCurrentDayFromProfileHTML; checks if current day throws an exception when no day is found
 # Expects: an exception to be raised with the string "Cannot find current day in profile HTML"
 reset()
 t.attemptTest(testGroupName, 2)
