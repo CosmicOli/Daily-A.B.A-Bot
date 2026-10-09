@@ -30,7 +30,7 @@ async def today(interaction: discord.Interaction):
     try:
         content, image = bu.generateMessageContentAndImage(bg.day)
     except Exception as e:
-        print(f"ERROR IN 'today' COMMAND: {e}")
+        print(f"EXCEPTION IN 'today' COMMAND: {e}")
         await interaction.response.send_message("Failed to send today's post. Please contact the bot owner to report this issue.")
     else:
         await br.respondWithPost(interaction, content, image)
@@ -43,11 +43,11 @@ async def day(interaction: discord.Interaction, day: str):
         await interaction.response.send_message(f"This bot instance has not cached day '{day}'")
         return
 
-    # On paper there shouldn't be a place for this to throw an error that isn't covered by the above check, but I felt it was probably worth doing this try except just in case
+    # On paper there shouldn't be a place for this to throw an exception that isn't covered by the above check, but I felt it was probably worth doing this try except just in case
     try:
         content, image = bu.generateMessageContentAndImage(day)
     except Exception as e:
-        print(f"ERROR IN 'day' COMMAND: {e}")
+        print(f"EXCEPTION IN 'day' COMMAND: {e}")
         await interaction.response.send_message("Failed to send the requested post. Please contact the bot owner to report this issue.")
     else:
         await br.respondWithPost(interaction, content, image)

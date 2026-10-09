@@ -30,14 +30,16 @@ async def on_ready():
     print(f"Logged in as {bg.client.user}")
 
     profileHTML = su.getHTMLFromLink(sg.profileLink)
-    print(f"Found {len(sd.downloadMostRecentPostsFromProfileHTML(profileHTML))} posts for backlog.")
+    try:
+        print(f"Found {len(sd.downloadMostRecentPostsFromProfileHTML(profileHTML))} posts for backlog.")
+    except Exception as e:
+        print(f"WARNING: EXCEPTION OCCURED WHILE DOWNLOADING POST BACKLOG: {e}")
 
     try:
         bu.updateCurrentDayFromProfileHTML(profileHTML)
         print(f"Current Day:{bg.day}")
     except Exception as e:
-        print("UNABLE TO INITIALIZE CURRENT DAY: " + str(e))
-        sys.exit(-1)
+        print(f"WARNING: EXCEPTION OCCURED WHILE INITIALIZING CURRENT DAY: {e}")
 
     await bg.tree.sync()
 

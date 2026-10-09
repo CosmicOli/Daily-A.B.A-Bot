@@ -41,12 +41,12 @@ async def mainLoop():
         try:
             profileHTML = su.getHTMLFromLink(sg.profileLink)
         except Exception as e:
-            print("A PROFILEHTML REQUEST ERROR HAS OCCURED IN MAIN LOOP: " + str(e))
+            print("AN EXCEPTION IN THE PROFILEHTML REQUEST HAS OCCURED IN MAIN LOOP: " + str(e))
         else:
             try:
                 flag = sd.downloadMostRecentPostFromProfileHTML(profileHTML)
             except Exception as e:
-                print("A DOWNLOAD ERROR HAS OCCURED IN MAIN LOOP: " + str(e))
+                print("AN EXCEPTION IN THE DOWNLOAD HAS OCCURED IN MAIN LOOP: " + str(e))
             else:
                 if (flag == 0):
                     try:

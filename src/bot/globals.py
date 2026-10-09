@@ -6,5 +6,5 @@ intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-day = 0
+day = None
 channels = []
