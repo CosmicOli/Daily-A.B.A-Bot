@@ -1,6 +1,7 @@
 import os
 
 import tracking as t
+import globals as g
 import utils as u
 
 import bot.globals as bg
@@ -8,7 +9,6 @@ import bot.utils as bu
 import scraper.download as sd
 import scraper.globals as sg
 import scraper.tracker as st
-import scraper.utils as su
 
 testGroupName = "download"
 
@@ -17,24 +17,16 @@ def reset():
 
     global testOrdinal
     global referenceOrdinal
-    global testBody
-    global testBodyFile
     global testPostLink
     global testImageLink
     global testImageFormat # NOTE: This is to be used when code expects you to be able to change the file format; I will magic number "jpg" where there is no control at that scope
-    global content
-    global image
-    global profileHTML
 
     testOrdinal = "test"
     referenceOrdinal = "REFERENCE"
-    testBody = "body"
-    testBodyFile = None
     testPostLink = "link"
     testImageLink = "link"
     testImageFormat = "jpg"
-    content = ""
-    image = None
+
 
 # As sd.downloadPost can throw an exception, in most cases the test should fail if an exception is thrown
 # This function factors out handling the exception in every test where relevant
@@ -69,7 +61,7 @@ except Exception as e:
 reset()
 t.attemptTest(testGroupName, 2)
 
-testImageLink = os.getenv("REFERENCE_IMAGE_LINK")
+testImageLink = g.referenceImageLink
 testImageFormat = "png"
 
 u.downloadReferenceImageFromLink(testImageFormat, testImageLink, referenceOrdinal)
@@ -92,7 +84,7 @@ else:
 reset()
 t.attemptTest(testGroupName, 3)
 
-sd.downloadPostBodyFromHTML(u.testPostHTML, testOrdinal)
+sd.downloadPostBodyFromHTML(g.testPostHTML, testOrdinal)
 try:
     file = open(f"{sg.postsDirectory}{testOrdinal}.txt", "r", encoding="utf-8")
 except Exception as e:
@@ -100,12 +92,15 @@ except Exception as e:
 else:
     body = file.read()
     file.close()
-    if (body == u.testPostBody):
+    if (body == g.testPostBody):
         t.passCurrentTest(f"Post body saved to file correctly")
     else:
         t.failCurrentTest(f"Downloaded text={body}")
 
 
+
+# not going to test individually whether body no image and image no body work, as it requires making a custom webpage
+# not going to test for the case where the image link returns an invalid http code, as it requires making a custom webpage
 
 # Test 4: for downloadPost; checks if an exception is raised when the post link is invalid
 # Expects: an exception to be raised

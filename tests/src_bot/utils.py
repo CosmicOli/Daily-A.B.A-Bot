@@ -1,13 +1,13 @@
 import discord
 
 import tracking as t
+import globals as g
 import utils as u
 
 import bot.globals as bg
 import bot.utils as bu
 import scraper.globals as sg
 import scraper.tracker as st
-import scraper.utils as su
 
 testGroupName = "utils"
 
@@ -48,6 +48,7 @@ def generateMessageContentAndImage(testOrdinal):
         return content, image
 
 
+
 # Test 1: for updateCurrentDayFromProfileHTML; checks if current day updates
 # Expects: the day to change from -1 to 280
 reset()
@@ -55,7 +56,7 @@ t.attemptTest(testGroupName, 1)
 
 bg.day = -1
 try:
-    bu.updateCurrentDayFromProfileHTML(u.testProfileHTML)
+    bu.updateCurrentDayFromProfileHTML(g.testProfileHTML)
 except Exception as e:
     t.failCurrentTest(f"day={bg.day}, exception thrown: {e}")
 else:
