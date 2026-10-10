@@ -60,6 +60,7 @@ else:
 # Test 2: for downloadImageFromLink; checks if a valid image link downloads the correct image
 # Expects: the same image as the reference image to be downloaded
 # NOTE: the expectation is that twitter images are all .jpg, however this part of code is written to account for all file formats
+# NOTE: a non twitter source has been chosen as twitter has harsh rate limiting, and I want to avoid tests failing due to server side issues
 reset()
 t.attemptTest(testGroupName, 2)
 
@@ -78,7 +79,6 @@ else:
         t.passCurrentTest(f"Image downloaded matched reference image")
     else:
         t.failCurrentTest(f"Image downloaded incorrectly")
-
 
 
 
@@ -118,8 +118,13 @@ else:
 
 
 
-# not going to test individually whether body no image and image no body work, as it requires making a custom webpage
-# not going to test for the case where the image link returns an invalid http code, as it requires making a custom webpage
+# NOTE: Twitter has harsh rate limiting, so links to twitter will not be used when testing downloadPost; this however leads to some unfortunate holes in the tests
+# The most obvious hole is that these tests do not verify that the correct things happen when the correct link is provided
+# This is not great, but on paper a failure in this function should be easy to spot manually as post bodies or images will consistently be missing
+# Plus, on paper the only functionality not tested here is specific case handling of other fully tested functions, so an error should be "self contained" to this function
+# Broadly however, I would not be able to do a full test without custom webpages regardless
+# E.g. I cannot test for when a post body exists but no image, or vice versa
+# E.g. I cannot test the case where an invalid http code exception occurs when downloading the image
 
 # Test 5: for downloadPost; checks if an exception is raised when the post link is invalid
 # Expects: an exception to be raised
@@ -137,7 +142,7 @@ else:
 
 # Test 6: for downloadPost; checks if a valid link (a link that produces html with http code 200) that doesn't produce twitter post html produces the right entry information
 # Expects: the entry to be f"{testOrdinal},False,{testPostLink}" and for no image or text files to be created
-# NOTE: Some warnings are expected to be printed during this test
+# NOTE: Some warnings are expected to be printed during this test; to test for these warning I am testing whether the files that they warn are not created indeed are not
 reset()
 t.attemptTest(testGroupName, 6)
 
@@ -157,11 +162,11 @@ else:
         t.passCurrentTest(f"Entry={postTrackingEntry[0]},{postTrackingEntry[1]},{postTrackingEntry[2]}")
 
 
-
 # Test 7: for downloadPost; 
 # Expects:
 reset()
 t.attemptTest(testGroupName, 7)
+
 
 
 # Test 8: for downloadPost; 

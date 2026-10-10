@@ -52,7 +52,7 @@ def downloadPost(ordinal, postLink):
             print(f"WARNING: Day '{ordinal}' image download failed:{e}")
             fileExists = False
         else:
-            fileExists = True     
+            fileExists = True
 
     # The programmed behaviour when no text file is found is to make the message content just the link, so this only needs to be a warning and not an error
     try:
