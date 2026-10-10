@@ -43,7 +43,7 @@ async def day(interaction: discord.Interaction, day: str):
         await interaction.response.send_message(f"This bot instance has not cached day '{day}'")
         return
 
-    # On paper there shouldn't be a place for this to throw an exception that isn't covered by the above check, but I felt it was probably worth doing this try except just in case
+    # On paper there shouldn't be a place for this to raise an exception that isn't covered by the above check, but I felt it was probably worth doing this try except just in case
     try:
         content, image = bu.generateMessageContentAndImage(day)
     except Exception as e:

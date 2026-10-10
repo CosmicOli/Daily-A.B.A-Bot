@@ -30,6 +30,9 @@ async def on_ready():
     print(f"Logged in as {bg.client.user}")
 
     profileHTML = su.getHTMLFromLink(sg.profileLink)
+    # This try except is legacy, coming from when an exception was raised when no posts were found
+    # I've realised that is a bit silly to throw an exception over, as there could just be no backlog posts
+    # I am keeping the try except even though I don't think there are any exceptions that can be raised just in case I am wrong 
     try:
         print(f"Found {len(sd.downloadMostRecentPostsFromProfileHTML(profileHTML))} posts for backlog.")
     except Exception as e:

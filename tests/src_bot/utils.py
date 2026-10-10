@@ -17,14 +17,14 @@ def reset():
     global testOrdinal
     global testBody
     global testBodyFile
-    global testLink
+    global testPostLink
     global content
     global image
 
     testOrdinal = "test"
     testBody = "body"
     testBodyFile = None
-    testLink = "link"
+    testPostLink = "link"
     content = ""
     image = None
 
@@ -35,7 +35,7 @@ def trackPost(testOrdinal, imageExists, link):
     try:
         st.trackPost(testOrdinal, imageExists, link)
     except Exception as e:
-        t.failCurrentTest(testGroupName, f"Exception text={e}")
+        t.failCurrentTest(f"Exception text={e}")
 
 # As bu.generateMessageContentAndImage can throw an exception, in most cases the test should fail if an exception is thrown
 # This function factors out handling the exception in every test where relevant
@@ -43,7 +43,7 @@ def generateMessageContentAndImage(testOrdinal):
     try:
         content, image = bu.generateMessageContentAndImage(testOrdinal)
     except Exception as e:
-        t.failCurrentTest(testGroupName, f"Exception text={e}")
+        t.failCurrentTest(f"Exception text={e}")
     else:
         return content, image
 
@@ -57,12 +57,12 @@ bg.day = -1
 try:
     bu.updateCurrentDayFromProfileHTML(u.testProfileHTML)
 except Exception as e:
-    t.failCurrentTest(testGroupName, f"day={bg.day}, exception thrown: {e}")
+    t.failCurrentTest(f"day={bg.day}, exception thrown: {e}")
 else:
     if (bg.day == "280"):
-        t.passCurrentTest(testGroupName, f"day={bg.day}")
+        t.passCurrentTest(f"day={bg.day}")
     else:
-        t.failCurrentTest(testGroupName, f"day={bg.day}")
+        t.failCurrentTest(f"day={bg.day}")
 
 
 # Test 2: for updateCurrentDayFromProfileHTML; checks if current day throws an exception when no day is found
@@ -74,11 +74,11 @@ try:
     bu.updateCurrentDayFromProfileHTML("")
 except Exception as e:
     if (str(e) == "Cannot find current day in profile HTML"):
-        t.passCurrentTest(testGroupName, f"Exception text={e}")
+        t.passCurrentTest(f"Exception text={e}")
     else:
-        t.failCurrentTest(testGroupName, f"Exception text={e}")
+        t.failCurrentTest(f"Exception text={e}")
 else:
-    t.failCurrentTest(testGroupName, f"day={bg.day}, exception should have been thrown")
+    t.failCurrentTest(f"day={bg.day}, exception should have been thrown")
 
 
 
@@ -98,11 +98,11 @@ try:
     content, image = bu.generateMessageContentAndImage(testOrdinal)
 except Exception as e:
     if (str(e) == f"No entry associated with '{testOrdinal}'"):
-        t.passCurrentTest(testGroupName, f"Exception text={e}")
+        t.passCurrentTest(f"Exception text={e}")
     else:
-        t.failCurrentTest(testGroupName, f"Exception text={e}")
+        t.failCurrentTest(f"Exception text={e}")
 else:
-    t.failCurrentTest(testGroupName, f"Exception should have been raised")
+    t.failCurrentTest(f"Exception should have been raised")
 
 
 # Test 4: for generateMessageContentAndImage; checks when entry, no files for body or image, entry has marked it expects no image
@@ -110,13 +110,13 @@ else:
 reset()
 t.attemptTest(testGroupName, 4)
 
-trackPost(testOrdinal, False, testLink)
+trackPost(testOrdinal, False, testPostLink)
 content, image = generateMessageContentAndImage(testOrdinal)
 
-if (content == f"\n{testLink}" and image == None):
-    t.passCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+if (content == f"\n{testPostLink}" and image == None):
+    t.passCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 else:
-    t.failCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+    t.failCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 
 
 # Test 5: for generateMessageContentAndImage; checks when entry, no files for body or image, entry has marked it expects an image
@@ -125,13 +125,13 @@ else:
 reset()
 t.attemptTest(testGroupName, 5)
 
-trackPost(testOrdinal, False, testLink)
+trackPost(testOrdinal, False, testPostLink)
 content, image = generateMessageContentAndImage(testOrdinal)
 
-if (content == f"\n{testLink}" and image == None):
-    t.passCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+if (content == f"\n{testPostLink}" and image == None):
+    t.passCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 else:
-    t.failCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+    t.failCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 
 
 # Test 6: for generateMessageContentAndImage; entry and file for body exists, no file for image exists, entry has marked it expects no image
@@ -143,13 +143,13 @@ testBodyFile = open(f"{sg.postsDirectory}{testOrdinal}.txt", "w")
 testBodyFile.write(testBody)
 testBodyFile.close()
 
-trackPost(testOrdinal, False, testLink)
+trackPost(testOrdinal, False, testPostLink)
 content, image = generateMessageContentAndImage(testOrdinal)
 
-if (content == f"{testBody}\n{testLink}" and image == None):
-    t.passCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+if (content == f"{testBody}\n{testPostLink}" and image == None):
+    t.passCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 else:
-    t.failCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+    t.failCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 
 
 # Test 7: for generateMessageContentAndImage; entry and file for body exists, no file for image exists, entry has marked it expects an image
@@ -162,13 +162,13 @@ testBodyFile = open(f"{sg.postsDirectory}{testOrdinal}.txt", "w")
 testBodyFile.write(testBody)
 testBodyFile.close()
 
-trackPost(testOrdinal, True, testLink)
+trackPost(testOrdinal, True, testPostLink)
 content, image = generateMessageContentAndImage(testOrdinal)
 
-if (content == f"{testBody}\n{testLink}" and image == None):
-    t.passCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+if (content == f"{testBody}\n{testPostLink}" and image == None):
+    t.passCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 else:
-    t.failCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+    t.failCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 
 
 # Test 8: for generateMessageContentAndImage; entry and file for image exists, no file for body exists, entry has marked it expects no image
@@ -178,13 +178,13 @@ t.attemptTest(testGroupName, 8)
 
 open(f"{sg.postsDirectory}{testOrdinal}.jpg", "w").close()
 
-trackPost(testOrdinal, False, testLink)
+trackPost(testOrdinal, False, testPostLink)
 content, image = generateMessageContentAndImage(testOrdinal)
 
-if (content == f"\n{testLink}" and image == None):
-    t.passCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+if (content == f"\n{testPostLink}" and image == None):
+    t.passCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 else:
-    t.failCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+    t.failCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 
 
 # Test 9: for generateMessageContentAndImage; entry and file for image exists, no file for body exists, entry has marked it expects an image
@@ -194,13 +194,13 @@ t.attemptTest(testGroupName, 9)
 
 open(f"{sg.postsDirectory}{testOrdinal}.jpg", "w").close()
 
-trackPost(testOrdinal, True, testLink)
+trackPost(testOrdinal, True, testPostLink)
 content, image = generateMessageContentAndImage(testOrdinal)
 
-if (content == f"\n{testLink}" and isinstance(image,discord.File)):
-    t.passCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+if (content == f"\n{testPostLink}" and isinstance(image,discord.File)):
+    t.passCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 else:
-    t.failCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+    t.failCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 
 
 # Test 10: for generateMessageContentAndImage; entry file and image exist, entry has marked it expects no image
@@ -214,13 +214,13 @@ testBodyFile.close()
 
 open(f"{sg.postsDirectory}{testOrdinal}.jpg", "w").close()
 
-trackPost(testOrdinal, False, testLink)
+trackPost(testOrdinal, False, testPostLink)
 content, image = generateMessageContentAndImage(testOrdinal)
 
-if (content == f"{testBody}\n{testLink}" and image == None):
-    t.passCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+if (content == f"{testBody}\n{testPostLink}" and image == None):
+    t.passCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 else:
-    t.failCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+    t.failCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 
 
 # Test 11: for generateMessageContentAndImage; entry file and image exist, entry has marked it expects an image
@@ -234,13 +234,13 @@ testBodyFile.close()
 
 open(f"{sg.postsDirectory}{testOrdinal}.jpg", "w").close()
 
-trackPost(testOrdinal, True, testLink)
+trackPost(testOrdinal, True, testPostLink)
 content, image = generateMessageContentAndImage(testOrdinal)
 
-if (content == f"{testBody}\n{testLink}" and isinstance(image,discord.File)):
-    t.passCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+if (content == f"{testBody}\n{testPostLink}" and isinstance(image,discord.File)):
+    t.passCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 else:
-    t.failCurrentTest(testGroupName, f"\ncontent='{content}'\nimage='{image}'")
+    t.failCurrentTest(f"\ncontent='{content}'\nimage='{image}'")
 
 
 # I believe as image will equal a test file, it blocks the test file from being deleted without calling a reset

@@ -21,7 +21,7 @@ def generateMessageContent(ordinal, link):
         bodyFile.close()
     except FileNotFoundError:
         body = ""
-        print(f"WARNING: body for {ordinal} missing while still tracked")
+        print(f"WARNING: body for '{ordinal}' missing while still tracked")
 
     # As discord omits leading new line characters, no changes to this have to be made when body is an empty string
     return f"{body}\n{link}"
@@ -33,7 +33,7 @@ def generateMessageImage(ordinal, expectingImage):
             image = discord.File(f"{sg.postsDirectory}{ordinal}.jpg")
         except FileNotFoundError:
             image = None
-            print(f"WARNING: image for {ordinal} missing when marked as found")
+            print(f"WARNING: image for '{ordinal}' missing when marked as found")
     else:
         image = None
 
