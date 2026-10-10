@@ -4,8 +4,6 @@ import tracking as t
 import globals as g
 import utils as u
 
-import bot.globals as bg
-import bot.utils as bu
 import scraper.download as sd
 import scraper.globals as sg
 import scraper.tracker as st
@@ -26,15 +24,6 @@ def reset():
     testPostLink = "link"
     testImageLink = "link"
     testImageFormat = "jpg"
-
-
-# As sd.downloadPost can throw an exception, in most cases the test should fail if an exception is thrown
-# This function factors out handling the exception in every test where relevant
-def downloadPost(ordinal, postLink):
-    try:
-        sd.downloadPost(ordinal, postLink)
-    except Exception as e:
-        t.failCurrentTest(f"Exception text={e}")
 
 
 
@@ -121,10 +110,14 @@ else:
 # NOTE: Twitter has harsh rate limiting, so links to twitter will not be used when testing downloadPost; this however leads to some unfortunate holes in the tests
 # The most obvious hole is that these tests do not verify that the correct things happen when the correct link is provided
 # This is not great, but on paper a failure in this function should be easy to spot manually as post bodies or images will consistently be missing
-# Plus, on paper the only functionality not tested here is specific case handling of other fully tested functions, so an error should be "self contained" to this function
+# Plus, on paper the only functionality not tested here is specific case handling of other fully tested functions, so an error should be 'self contained' to this function
 # Broadly however, I would not be able to do a full test without custom webpages regardless
 # E.g. I cannot test for when a post body exists but no image, or vice versa
 # E.g. I cannot test the case where an invalid http code exception occurs when downloading the image
+
+# NOTE: I am not testing for different states of the PostTracker.csv file here with the exception of the 'obvious' cases of the post having already been tracked or not
+# This is because io to this file is tested to follow a standard that should have no conceptual issues, and frankly hence I do not want to have to account for cases that don't follow this standard
+# And yaknow, if I am wrong about the lack of notable conceptual issues then I guess I will cross that bridge when I get to it
 
 # Test 5: for downloadPost; checks if an exception is raised when the post link is invalid
 # Expects: an exception to be raised
@@ -135,7 +128,12 @@ t.attemptTest(testGroupName, 5)
 try:
     sd.downloadPost(testOrdinal, "")
 except Exception as e:
-    t.passCurrentTest(f"Exception text={e}")
+    # A different exception can be raised that is unrelated, which has to be accounted for
+    # I am relying on this function only having these two types of exception be possible for this test to work, but I personally think that is okay as that is effectively in the spec for this function
+    if (str(e) == f"Post already tracked for ordinal '{testOrdinal}'"):
+        t.failCurrentTest(f"Exception text={e}")
+    else:
+        t.passCurrentTest(f"Exception text={e}")
 else:
     t.failCurrentTest(f"No exception raised when expected")
 
@@ -148,7 +146,10 @@ t.attemptTest(testGroupName, 6)
 
 # Look if google is down we have bigger problems than whether my code passes these tests
 testPostLink = "https://google.com/"
-downloadPost(testOrdinal, testPostLink)
+try:
+    sd.downloadPost(testOrdinal, testPostLink)
+except Exception as e:
+    t.failCurrentTest(f"Exception text={e}")
 
 if (os.path.isfile(f"{sg.postsDirectory}{testOrdinal}.jpg")):
     t.failCurrentTest(f"Image downloaded unexpectedly")
@@ -167,6 +168,17 @@ else:
 reset()
 t.attemptTest(testGroupName, 7)
 
+st.trackPost(testOrdinal, True, testPostLink)
+
+testPostLink = "https://google.com/"
+
+try:
+    sd.downloadPost(testOrdinal, testPostLink)
+except Exception as e:
+    if (str(e) == f"Post already tracked for ordinal '{testOrdinal}'"):
+        t.passCurrentTest(f"Exception text={e}")
+    else:
+        t.failCurrentTest(f"Exception text={e}")
 
 
 # Test 8: for downloadPost; 
