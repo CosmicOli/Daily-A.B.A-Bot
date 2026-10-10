@@ -53,6 +53,8 @@ except Exception as e:
         t.passCurrentTest(f"Exception text={e}")
     else:
         t.failCurrentTest(f"Exception text={e}")
+else:
+    t.failCurrentTest("No exception raised when expected")
 
 
 # Test 2: for downloadImageFromLink; checks if a valid image link downloads the correct image
@@ -79,10 +81,27 @@ else:
 
 
 
-# Test 3: for downloadPostBodyFromHTML; checks if the correct body is saved to the correct file upon given a valid post HTML
-# Expects: the test body to be saved to the correct file
+
+# Test 3: for downloadPostBodyFromHTML; checks if an exception is raised if no post body is found in the HTML
+# Expects: an exception to be raised with the string "No post body found in HTML"
 reset()
 t.attemptTest(testGroupName, 3)
+
+try:
+    sd.downloadPostBodyFromHTML("", testOrdinal)
+except Exception as e:
+    if (str(e) == "No post body found in HTML"):
+        t.passCurrentTest(f"Exception text={e}")
+    else:
+        t.failCurrentTest(f"Exception text={e}")
+else:
+    t.failCurrentTest("No exception raised when expected")
+
+
+# Test 4: for downloadPostBodyFromHTML; checks if the correct body is saved to the correct file upon given a valid post HTML
+# Expects: the test body to be saved to the correct file
+reset()
+t.attemptTest(testGroupName, 4)
 
 sd.downloadPostBodyFromHTML(g.testPostHTML, testOrdinal)
 try:
@@ -102,11 +121,11 @@ else:
 # not going to test individually whether body no image and image no body work, as it requires making a custom webpage
 # not going to test for the case where the image link returns an invalid http code, as it requires making a custom webpage
 
-# Test 4: for downloadPost; checks if an exception is raised when the post link is invalid
+# Test 5: for downloadPost; checks if an exception is raised when the post link is invalid
 # Expects: an exception to be raised
 # NOTE: I am not testing for a particular exception or test here as the exception should be raised by requests.get, and while there should be a consistent exception thrown by requests.get the point of the test is that we don't care which one it is
 reset()
-t.attemptTest(testGroupName, 4)
+t.attemptTest(testGroupName, 5)
 
 try:
     sd.downloadPost(testOrdinal, "")
@@ -116,11 +135,11 @@ else:
     t.failCurrentTest(f"No exception raised when expected")
 
 
-# Test 5: for downloadPost; checks if a valid link (a link that produces html with http code 200) that doesn't produce twitter post html produces the right entry information
+# Test 6: for downloadPost; checks if a valid link (a link that produces html with http code 200) that doesn't produce twitter post html produces the right entry information
 # Expects: the entry to be f"{testOrdinal},False,{testPostLink}" and for no image or text files to be created
 # NOTE: Some warnings are expected to be printed during this test
 reset()
-t.attemptTest(testGroupName, 5)
+t.attemptTest(testGroupName, 6)
 
 # Look if google is down we have bigger problems than whether my code passes these tests
 testPostLink = "https://google.com/"
@@ -139,16 +158,16 @@ else:
 
 
 
-# Test 6: for downloadPost; 
-# Expects:
-reset()
-t.attemptTest(testGroupName, 6)
-
-
 # Test 7: for downloadPost; 
 # Expects:
 reset()
 t.attemptTest(testGroupName, 7)
+
+
+# Test 8: for downloadPost; 
+# Expects:
+reset()
+t.attemptTest(testGroupName, 8)
 
 
 reset()
