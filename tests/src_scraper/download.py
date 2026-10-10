@@ -28,7 +28,8 @@ def reset():
     testLink = "link"
     content = ""
     image = None
-    profileHTML = su.getHTMLFromLink(sg.profileLink)
+
+
 
 # Test 1: for downloadImageFromLink; checks if an invalid http code causes an exception
 # Expects: an exception to be raised with the string "Image request failed with status code '404'"
@@ -59,11 +60,29 @@ else:
     referenceImage = open(f"{sg.postsDirectory}REFERENCE_IMAGE.png", "rb").read()
     image = open(f"{sg.postsDirectory}{testOrdinal}.png", "rb").read()
     if (image == referenceImage):
-        t.passCurrentTest(testGroupName, f"Image downloaded successfully")
+        t.passCurrentTest(testGroupName, f"Image downloaded matched reference image")
     else:
         t.failCurrentTest(testGroupName, f"Image downloaded incorrectly")
 
 
+
+# Test 3: for downloadPostBodyFromHTML; checks if the correct body is saved to the correct file upon given a valid post HTML
+# Expects: the test body to be saved to the correct file
+reset()
+t.attemptTest(testGroupName, 3)
+
+sd.downloadPostBodyFromHTML(u.testPostHTML, testOrdinal)
+try:
+    file = open(f"{sg.postsDirectory}{testOrdinal}.txt", "r", encoding="utf-8")
+except Exception as e:
+    t.failCurrentTest(testGroupName, f"Exception thrown while attempting to read the supposedly created file\nException text={e}")
+else:
+    body = file.read()
+    file.close()
+    if (body == u.testPostBody):
+        t.passCurrentTest(testGroupName, f"Post body saved to file correctly")
+    else:
+        t.failCurrentTest(testGroupName, f"Downloaded text={body}")
 
 
 reset()
