@@ -18,6 +18,7 @@ def reset():
     global testBody
     global testBodyFile
     global testPostLink
+    global testProfileHTML
     global content
     global image
 
@@ -25,8 +26,11 @@ def reset():
     testBody = "body"
     testBodyFile = None
     testPostLink = "link"
+    testProfileHTML = g.testProfileHTML
     content = ""
     image = None
+
+    bg.day = 0
 
 
 # As st.trackPost can throw an exception, in most cases the test should fail if an exception is thrown
@@ -56,7 +60,7 @@ t.attemptTest(testGroupName, 1)
 
 bg.day = -1
 try:
-    bu.updateCurrentDayFromProfileHTML(g.testProfileHTML)
+    bu.updateCurrentDayFromProfileHTML(testProfileHTML)
 except Exception as e:
     t.failCurrentTest(f"day={bg.day}, exception thrown: {e}")
 else:
@@ -71,8 +75,10 @@ else:
 reset()
 t.attemptTest(testGroupName, 2)
 
+testProfileHTML = ""
+
 try:
-    bu.updateCurrentDayFromProfileHTML("")
+    bu.updateCurrentDayFromProfileHTML(testProfileHTML)
 except Exception as e:
     if (str(e) == "Cannot find current day in profile HTML"):
         t.passCurrentTest(f"Exception text={e}")
@@ -108,6 +114,7 @@ else:
 
 # Test 4: for generateMessageContentAndImage; checks when entry, no files for body or image, entry has marked it expects no image
 # Expects: content=f"\n{testLink}" and image=None
+# NOTE: There should be a warning printed with this test
 reset()
 t.attemptTest(testGroupName, 4)
 
@@ -122,11 +129,11 @@ else:
 
 # Test 5: for generateMessageContentAndImage; checks when entry, no files for body or image, entry has marked it expects an image
 # Expects: content=f"\n{testLink}" and image=None
-# NOTE: There should be a warning printed with this test
+# NOTE: There should be two warnings printed with this test
 reset()
 t.attemptTest(testGroupName, 5)
 
-trackPost(testOrdinal, False, testPostLink)
+trackPost(testOrdinal, True, testPostLink)
 content, image = generateMessageContentAndImage(testOrdinal)
 
 if (content == f"\n{testPostLink}" and image == None):

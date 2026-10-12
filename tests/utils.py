@@ -34,7 +34,6 @@ def init():
 
 
 def remove():
-    bg.day = 0
     shutil.rmtree(sg.postsDirectory, ignore_errors=True)
 
 

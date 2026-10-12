@@ -16,6 +16,8 @@ def reset():
     global testOrdinal
     global referenceOrdinal
     global testPostLink
+    global testPostHTML
+    global testProfileHTML
     global testImageLink
     global testImageFormat # NOTE: This is to be used when code expects you to be able to change the file format; I will magic number "jpg" where there is no control at that scope
     global flag
@@ -23,9 +25,13 @@ def reset():
     testOrdinal = "test"
     referenceOrdinal = "REFERENCE"
     testPostLink = "link"
+    testPostHTML = g.testPostHTML
+    testProfileHTML = g.testProfileHTML
     testImageLink = "link"
     testImageFormat = "jpg"
     flag = None
+
+    sg.postLinkPrefix = "https://x.com/EveryDayABA/status/"
 
 
 
@@ -78,8 +84,10 @@ else:
 reset()
 t.attemptTest(testGroupName, 3)
 
+testPostHTML = ""
+
 try:
-    sd.downloadPostBodyFromHTML("", testOrdinal)
+    sd.downloadPostBodyFromHTML(testPostHTML, testOrdinal)
 except Exception as e:
     if (str(e) == "No post body found in HTML"):
         t.passCurrentTest(f"Exception text={e}")
@@ -94,7 +102,7 @@ else:
 reset()
 t.attemptTest(testGroupName, 4)
 
-sd.downloadPostBodyFromHTML(g.testPostHTML, testOrdinal)
+sd.downloadPostBodyFromHTML(testPostHTML, testOrdinal)
 try:
     file = open(f"{sg.postsDirectory}{testOrdinal}.txt", "r", encoding="utf-8")
 except Exception as e:
@@ -127,13 +135,17 @@ else:
 reset()
 t.attemptTest(testGroupName, 5)
 
+# An exception raised when the post link is invalid should take priority over an exception raised due to the post already being tracked
+# This ensures both errors would occur, and in this situation that the priority is correct
+st.trackPost(testOrdinal, False, testPostLink)
+
 try:
     sd.downloadPost(testOrdinal, testPostLink)
 except Exception as e:
     # A different exception can be raised that is unrelated, which has to be accounted for
     # I am relying on this function only having these two types of exception be possible for this test to work, but I personally think that is okay as that is effectively in the spec for this function
     if (str(e) == f"Post already tracked for ordinal '{testOrdinal}'"):
-        t.failCurrentTest(f"Exception text={e}")
+        t.failCurrentTest(f"Incorrect exception priority: Exception text={e}")
     else:
         t.passCurrentTest(f"Exception text={e}")
 else:
@@ -167,6 +179,7 @@ else:
 
 # Test 7: for downloadPost; checks if an exception is raised when attempting to download a post that has already been tracked
 # Expects: an exception to be raised with the string f"Post already tracked for ordinal '{testOrdinal}'"
+# NOTE: Some warnings are expected to be printed during this test; they are however unrelated to what is being tested for
 reset()
 t.attemptTest(testGroupName, 7)
 
@@ -198,8 +211,9 @@ else:
     t.failCurrentTest(f"No exception raised when expected")
 
 
-# Test 9: for downloadPostIfNotTracked; 
-# Expects:
+# Test 9: for downloadPostIfNotTracked; checks if the correct flag is raised when attempting to download an untracked post
+# Expects: a return value of 0
+# NOTE: Some warnings are expected to be printed during this test; they are however unrelated to what is being tested for
 reset()
 t.attemptTest(testGroupName, 9)
 
@@ -212,8 +226,8 @@ else:
     t.failCurrentTest(f"Post failed to download despite being untracked: flag={flag}")
 
 
-# Test 10: for downloadPostIfNotTracked; 
-# Expects:
+# Test 10: for downloadPostIfNotTracked; checks if the correct flag is raised when attempting to download a tracked post
+# Expects: a return value of -1
 reset()
 t.attemptTest(testGroupName, 10)
 
@@ -226,5 +240,115 @@ if (flag == -1):
     t.passCurrentTest(f"Post correctly failed to download due to being tracked: flag={flag}")
 else:
     t.failCurrentTest(f"Post incorrectly downloaded when already tracked: flag={flag}")
+
+
+# This is used for tests where downloadMostRecentPostFromProfileHTML is expected to throw exceptions
+def testForSpecificException_downloadMostRecentPostFromProfileHTML(exceptionText):
+    try:
+        sd.downloadMostRecentPostFromProfileHTML(testProfileHTML)
+    except Exception as e:
+        if (str(e) == exceptionText):
+            t.passCurrentTest(f"Exception text={e}")
+        else:
+            t.failCurrentTest(f"Incorrect exception: Exception text={e}")
+    else:
+        t.failCurrentTest(f"No exception raised when expected")
+
+
+# Test 11: for downloadMostRecentPostFromProfileHTML; checks if an exception is raised when no ordinal is found (and a no link exception is raised)
+# Expects: an exception to be raised with the string "No ordinal found in profileHTML"
+# NOTE: this exception should be raised first, before either the exception for no link or invalid link; no link and invalid link are mutually exclusive, so a test for each case is required
+reset()
+t.attemptTest(testGroupName, 11)
+
+testProfileHTML = ""
+testForSpecificException_downloadMostRecentPostFromProfileHTML("No ordinal found in profileHTML")
+
+
+# Test 12: for downloadMostRecentPostFromProfileHTML; checks if an exception is raised when no ordinal is found (and an invalid link exception is raised)
+# Expects: an exception to be raised with the string "No ordinal found in profileHTML"
+# NOTE: this exception should be raised first, before either the exception for no link or invalid link; no link and invalid link are mutually exclusive, so a test for each case is required
+reset()
+t.attemptTest(testGroupName, 12)
+
+sg.postLinkPrefix = "" # This makes the link invalid
+
+testProfileHTML = "data-href=\"/EveryDayABA/status/1\""
+testForSpecificException_downloadMostRecentPostFromProfileHTML("No ordinal found in profileHTML")
+
+
+# Test 13: for downloadMostRecentPostFromProfileHTML; checks if an exception is raised when no post link is found (and an ordinal is found)
+# Expects: an exception to be raised with the string "No post link found in profileHTML"
+reset()
+t.attemptTest(testGroupName, 13)
+
+testProfileHTML = "Day 1 of A.B.A posting."
+testForSpecificException_downloadMostRecentPostFromProfileHTML("No post link found in profileHTML")
+
+
+# Test 14: for downloadMostRecentPostFromProfileHTML; checks if an exception is raised when an invalid post link is found (and an ordinal is found)
+# Expects: an exception to be raised
+# NOTE: I am not testing for a particular exception or test here as the exception should be raised by requests.get, and while there should be a consistent exception thrown by requests.get the point of the test is that we don't care which one it is
+reset()
+t.attemptTest(testGroupName, 14)
+
+sg.postLinkPrefix = "" # This makes the link invalid
+
+testProfileHTML = "Day 1 of A.B.A posting. data-href=\"/EveryDayABA/status/1\""
+try:
+    sd.downloadMostRecentPostFromProfileHTML(testProfileHTML)
+except Exception as e:
+    if (str(e) == "No post link found in profileHTML" or str(e) == "No ordinal found in profileHTML"):
+        t.failCurrentTest(f"Incorrect exception: Exception text={e}")
+    else:
+        t.passCurrentTest(f"Exception text={e}")
+else:
+    t.failCurrentTest(f"No exception raised when expected")
+
+
+# Test 15: for downloadMostRecentPostFromProfileHTML; checks if the correct flag is raised when attempting to download an untracked post
+# Expects: a return value of 0
+reset()
+t.attemptTest(testGroupName, 15)
+
+testOrdinal = 1
+testProfileHTML = f"Day {testOrdinal} of A.B.A posting. test"
+sg.postLinkPrefix = "https://google.com/"
+sg.postIDMatch = "(test)" # I have to assume that a grouping exists in the regex, as I don't see a way of making a test postIDMatch have an arbitrary amount of groupings and the code to not care
+
+try:
+    flag = sd.downloadMostRecentPostFromProfileHTML(testProfileHTML)
+except Exception as e:
+    t.failCurrentTest(f"Exception text={e}")
+else:
+    if (flag == 0):
+        t.passCurrentTest(f"Post correctly downloaded when not already tracked: flag={flag}")
+    else:
+        t.failCurrentTest(f"Post failed to download despite being untracked: flag={flag}")
+
+
+# Test 16: for downloadMostRecentPostFromProfileHTML; checks if the correct flag is raised when attempting to download a tracked post
+# Expects: a return value of -1
+reset()
+t.attemptTest(testGroupName, 16)
+
+testOrdinal = 1
+testProfileHTML = f"Day {testOrdinal} of A.B.A posting. test"
+sg.postLinkPrefix = "https://google.com/"
+sg.postIDMatch = "(test)" # I have to assume that a grouping exists in the regex, as I don't see a way of making a test postIDMatch have an arbitrary amount of groupings and the code to not care
+
+st.trackPost(testOrdinal, True, testPostLink)
+
+try:
+    flag = sd.downloadMostRecentPostFromProfileHTML(testProfileHTML)
+except Exception as e:
+    t.failCurrentTest(f"Exception text={e}")
+else:
+    if (flag == -1):
+        t.passCurrentTest(f"Post correctly failed to download due to being tracked: flag={flag}")
+    else:
+        t.failCurrentTest(f"Post incorrectly downloaded when already tracked: flag={flag}")
+
+
 
 reset()

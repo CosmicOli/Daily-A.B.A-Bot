@@ -80,13 +80,18 @@ def downloadPostIfNotTracked(ordinal, postLink):
 
 
 def downloadMostRecentPostFromProfileHTML(profileHTML):
-    ordinal = re.search(sg.ordinalMatch, profileHTML).group(1)
+    try:
+        ordinal = re.search(sg.ordinalMatch, profileHTML).group(1)
+    except AttributeError:
+        raise Exception("No ordinal found in profileHTML")    
+
     postLink = su.getPostLinkFromHTML(profileHTML)
 
     if postLink is None:
-        raise Exception("Failed to find a post")
+        raise Exception("No post link found in profileHTML")
 
     # NOTE: downloadPostIfNotTracked raises an exception if the postLink is invalid
+    # That being said, it should never be possible for a fqdn not to be returned from su.getPostLinkFromHTML(profileHTML), unless it returns None
     return downloadPostIfNotTracked(ordinal, postLink)
 
 

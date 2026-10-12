@@ -12,16 +12,16 @@ def getHTMLFromLink(postLink):
 
 
 def getPostLinkFromHTML(profileHTML):
-    postID = re.search(sg.postMatch, profileHTML)
+    postID = re.search(sg.postIDMatch, profileHTML)
     if postID:
-        postLink = f"https://x.com/EveryDayABA/status/{postID.group(1)}"
+        postLink = f"{sg.postLinkPrefix}{postID.group(1)}"
     else:
         postLink = None
     return postLink
 
 
 def getImageLinkFromPostHTML(postHTML):
-    imagePartialLink = re.search("src=\"(https://pbs.twimg.com/media/.{15}\\?format=).*?\"", postHTML)
+    imagePartialLink = re.search(sg.imagePartialLinkMatch, postHTML)
     if (imagePartialLink is None):
         return None
     imageLink = imagePartialLink.group(1) + "jpg&name=4096x4096"
@@ -29,7 +29,7 @@ def getImageLinkFromPostHTML(postHTML):
 
 
 def getBodyFromPostHTML(postHTML):
-    postBody = re.search(f"content=\"({sg.titleMatch}(?s:.)*?)\"", postHTML)
+    postBody = re.search(sg.postBodyMatch, postHTML)
     if (postBody is None):
         return None
     else:
