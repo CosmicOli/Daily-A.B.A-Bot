@@ -18,12 +18,14 @@ def reset():
     global testPostLink
     global testImageLink
     global testImageFormat # NOTE: This is to be used when code expects you to be able to change the file format; I will magic number "jpg" where there is no control at that scope
+    global flag
 
     testOrdinal = "test"
     referenceOrdinal = "REFERENCE"
     testPostLink = "link"
     testImageLink = "link"
     testImageFormat = "jpg"
+    flag = None
 
 
 
@@ -126,7 +128,7 @@ reset()
 t.attemptTest(testGroupName, 5)
 
 try:
-    sd.downloadPost(testOrdinal, "")
+    sd.downloadPost(testOrdinal, testPostLink)
 except Exception as e:
     # A different exception can be raised that is unrelated, which has to be accounted for
     # I am relying on this function only having these two types of exception be possible for this test to work, but I personally think that is okay as that is effectively in the spec for this function
@@ -163,8 +165,8 @@ else:
         t.passCurrentTest(f"Entry={postTrackingEntry[0]},{postTrackingEntry[1]},{postTrackingEntry[2]}")
 
 
-# Test 7: for downloadPost; 
-# Expects:
+# Test 7: for downloadPost; checks if an exception is raised when attempting to download a post that has already been tracked
+# Expects: an exception to be raised with the string f"Post already tracked for ordinal '{testOrdinal}'"
 reset()
 t.attemptTest(testGroupName, 7)
 
@@ -181,10 +183,48 @@ except Exception as e:
         t.failCurrentTest(f"Exception text={e}")
 
 
-# Test 8: for downloadPost; 
-# Expects:
+
+# Test 8: for downloadPostIfNotTracked; checks if an exception is raised when the post link is invalid
+# Expects: an exception to be raised
+# NOTE: I am not testing for a particular exception or test here as the exception should be raised by requests.get, and while there should be a consistent exception thrown by requests.get the point of the test is that we don't care which one it is
 reset()
 t.attemptTest(testGroupName, 8)
 
+try:
+    sd.downloadPostIfNotTracked(testOrdinal, testPostLink)
+except Exception as e:
+    t.passCurrentTest(f"Exception text={e}")
+else:
+    t.failCurrentTest(f"No exception raised when expected")
+
+
+# Test 9: for downloadPostIfNotTracked; 
+# Expects:
+reset()
+t.attemptTest(testGroupName, 9)
+
+testPostLink = "https://google.com/"
+
+flag = sd.downloadPostIfNotTracked(testOrdinal, testPostLink)
+if (flag == 0):
+    t.passCurrentTest(f"Post correctly downloaded when not already tracked: flag={flag}")
+else:
+    t.failCurrentTest(f"Post failed to download despite being untracked: flag={flag}")
+
+
+# Test 10: for downloadPostIfNotTracked; 
+# Expects:
+reset()
+t.attemptTest(testGroupName, 10)
+
+st.trackPost(testOrdinal, True, testPostLink)
+
+testPostLink = "https://google.com/"
+
+flag = sd.downloadPostIfNotTracked(testOrdinal, testPostLink)
+if (flag == -1):
+    t.passCurrentTest(f"Post correctly failed to download due to being tracked: flag={flag}")
+else:
+    t.failCurrentTest(f"Post incorrectly downloaded when already tracked: flag={flag}")
 
 reset()
