@@ -32,6 +32,7 @@ def reset():
     flag = None
 
     sg.postLinkPrefix = "https://x.com/EveryDayABA/status/"
+    sg.postIDMatch = "data-href=\"/EveryDayABA/status/(\\d+)\""
 
 
 
@@ -294,7 +295,7 @@ t.attemptTest(testGroupName, 14)
 
 sg.postLinkPrefix = "" # This makes the link invalid
 
-testProfileHTML = "Day 1 of A.B.A posting. data-href=\"/EveryDayABA/status/1\""
+testProfileHTML = "data-href=\"/EveryDayABA/status/1\" Day 1 of A.B.A posting."
 try:
     sd.downloadMostRecentPostFromProfileHTML(testProfileHTML)
 except Exception as e:
@@ -308,11 +309,12 @@ else:
 
 # Test 15: for downloadMostRecentPostFromProfileHTML; checks if the correct flag is raised when attempting to download an untracked post
 # Expects: a return value of 0
+# NOTE: This is not comprehensive proof of correct downloading, as I am assuming that this function relies on downloadPost and so the proof lies in the tests for that function instead
 reset()
 t.attemptTest(testGroupName, 15)
 
 testOrdinal = 1
-testProfileHTML = f"Day {testOrdinal} of A.B.A posting. test"
+testProfileHTML = f"test Day {testOrdinal} of A.B.A posting."
 sg.postLinkPrefix = "https://google.com/"
 sg.postIDMatch = "(test)" # I have to assume that a grouping exists in the regex, as I don't see a way of making a test postIDMatch have an arbitrary amount of groupings and the code to not care
 
@@ -333,7 +335,7 @@ reset()
 t.attemptTest(testGroupName, 16)
 
 testOrdinal = 1
-testProfileHTML = f"Day {testOrdinal} of A.B.A posting. test"
+testProfileHTML = f"test Day {testOrdinal} of A.B.A posting."
 sg.postLinkPrefix = "https://google.com/"
 sg.postIDMatch = "(test)" # I have to assume that a grouping exists in the regex, as I don't see a way of making a test postIDMatch have an arbitrary amount of groupings and the code to not care
 
@@ -349,6 +351,62 @@ else:
     else:
         t.failCurrentTest(f"Post incorrectly downloaded when already tracked: flag={flag}")
 
+
+
+# Test 17: for downloadMostRecentPostsFromProfileHTML; checks that the output contains nothing when no backlog is found
+# Expects: len(output) == 0
+reset()
+t.attemptTest(testGroupName, 17)
+
+testProfileHTML = ""
+
+output = sd.downloadMostRecentPostsFromProfileHTML(testProfileHTML)
+
+if (len(output) == 0):
+    t.passCurrentTest("Correctly downloaded 0 posts when 0 posts were present")
+else:
+    t.failCurrentTest(f"Output={output}")
+
+
+# Test 18: for downloadMostRecentPostsFromProfileHTML; checks if all posts found are downloaded when they are not already tracked
+# Expects: output to be [0,0,0]
+reset()
+t.attemptTest(testGroupName, 18)
+
+testOrdinal = 1
+testProfileHTML = f"test Day {testOrdinal} of A.B.A posting. test Day {testOrdinal + 1} of A.B.A posting. test Day {testOrdinal + 2} of A.B.A posting."
+sg.postLinkPrefix = "https://google.com/"
+sg.postIDMatch = "(test)" # I have to assume that a grouping exists in the regex, as I don't see a way of making a test postIDMatch have an arbitrary amount of groupings and the code to not care
+
+output = sd.downloadMostRecentPostsFromProfileHTML(testProfileHTML)
+
+if (all(map(lambda x: x == 0, output))):
+    t.passCurrentTest(f"Downloaded: {output.count(0)} posts\noutput={output}")
+else:
+    t.failCurrentTest(f"Downloaded: {output.count(0)} posts\noutput={output}")
+
+reset()
+
+
+# Test 19: for downloadMostRecentPostsFromProfileHTML; checks if all posts found are downloaded when some are already tracked
+# Expects: output to be [-1,0,-1]
+reset()
+t.attemptTest(testGroupName, 19)
+
+testOrdinal = 1
+testProfileHTML = f"test Day {testOrdinal} of A.B.A posting. test Day {testOrdinal + 1} of A.B.A posting. test Day {testOrdinal + 2} of A.B.A posting."
+sg.postLinkPrefix = "https://google.com/"
+sg.postIDMatch = "(test)" # I have to assume that a grouping exists in the regex, as I don't see a way of making a test postIDMatch have an arbitrary amount of groupings and the code to not care
+
+st.trackPost(testOrdinal, True, testPostLink)
+st.trackPost(testOrdinal + 2, True, testPostLink)
+
+output = sd.downloadMostRecentPostsFromProfileHTML(testProfileHTML)
+
+if (output[0] == -1 and output[1] == 0 and output[2] == -1):
+    t.passCurrentTest(f"Downloaded: {output.count(0)} posts\noutput={output}")
+else:
+    t.failCurrentTest(f"Downloaded: {output.count(0)} posts\noutput={output}")
 
 
 reset()
