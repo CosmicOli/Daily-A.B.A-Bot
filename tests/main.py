@@ -14,6 +14,7 @@ u.init()
 
 import src_bot.utils
 import src_scraper.download
+import src_scraper.tracker
 
 u.remove()
 
