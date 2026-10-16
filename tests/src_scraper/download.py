@@ -20,7 +20,10 @@ def reset():
     global testProfileHTML
     global testImageLink
     global testImageFormat # NOTE: This is to be used when code expects you to be able to change the file format; I will magic number "jpg" where there is no control at that scope
+    global file
+    global body
     global flag
+    global output
 
     testOrdinal = "test"
     referenceOrdinal = "REFERENCE"
@@ -29,7 +32,10 @@ def reset():
     testProfileHTML = g.testProfileHTML
     testImageLink = "link"
     testImageFormat = "jpg"
+    file = None
+    body = None
     flag = None
+    output = None
 
     sg.postLinkPrefix = "https://x.com/EveryDayABA/status/"
     sg.postIDMatch = "data-href=\"/EveryDayABA/status/(\\d+)\""
