@@ -5,8 +5,8 @@ import requests
 import scraper.globals as sg
 
 
-def getHTMLFromLink(postLink):
-    requestForPostHTML = requests.get(postLink, headers=sg.headers)
+def getHTMLFromLink(link):
+    requestForPostHTML = requests.get(link, headers=sg.headers)
     postHTML = requestForPostHTML.content.decode("utf-8")
     return postHTML
 
@@ -33,4 +33,10 @@ def getBodyFromPostHTML(postHTML):
     if (postBody is None):
         return None
     else:
-        return unescape(postBody.group(1))
+        # I have changed how regex works now to account for the account reposting its own posts; I am not hence certain that html unescape is necessary anymore, but nevertheless I might as well keep it
+        formattedBody = unescape(postBody.group(1)).replace("\\n", "\n")
+
+        if (re.search(sg.extraLinkMatch, formattedBody) is None):
+            return formattedBody
+        else:
+            return formattedBody[:-24]
