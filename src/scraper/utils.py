@@ -4,7 +4,6 @@ import requests
 
 import scraper.globals as sg
 
-
 def getHTMLFromLink(link):
     requestForPostHTML = requests.get(link, headers=sg.headers)
     postHTML = requestForPostHTML.content.decode("utf-8")
