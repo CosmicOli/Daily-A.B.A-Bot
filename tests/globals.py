@@ -392,6 +392,12 @@ A.B.A made by
 @rsutibu
 #ggst_aba #aba #ggst"""
 
+# The matching first link from testProfileHTML
+testPostLink = "https://x.com/EveryDayABA/status/2108023901242450274"
+
+# The matching image link from testPostHTML
+testImageLink = "https://pbs.twimg.com/media/HUE0kKOXMAADKNu?format=jpg&name=4096x4096"
+
 # I clicked random for a while and decided this was what I settled on (xkcd 729)
 # I am hard coding it instead of leaving putting it in the .env as I want the test script to be able to run without any user setup
 referenceImageLink = "https://imgs.xkcd.com/comics/laser_pointer.png"

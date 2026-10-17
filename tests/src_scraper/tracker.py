@@ -23,13 +23,12 @@ def reset():
     file = None
     postTrackerFileContents = None
 
-    sg.postLinkPrefix = "https://x.com/EveryDayABA/status/"
-    sg.postIDMatch = "data-href=\"/EveryDayABA/status/(\\d+)\""
 
 
 # NOTE: I am not adding tests for what happens in erronious or comprehensive data situations, e.g. only one comma in an entry, lots of different files already in the tracker, etc
 # This is because both of these functions should adhere to a standard that avoids incorrect data being written in or read, and that standard is being tested to
 # The one case I do check for erronious data is when it is expected; that is in particular when an entry with the same ordinal already exists when attempting to add one, or trying to read an entry that doesn't exist
+
 
 
 # Test 1: for getPostTrackingEntry; checks that when attempting to retrieve an entry that doesn't exist, None is returned
