@@ -97,3 +97,43 @@ except Exception as e:
         t.failCurrentTest(f"Exception text={e}")
 else:
     t.failCurrentTest("No exception raised when expected")
+
+
+
+# Test 5: for untrackPost; checks if when attempting to untrack a post that does not exist, an exception is raised
+# Expects: an exception to be raised with the string f"Post already untracked for ordinal '{testOrdinal}'"
+reset()
+t.attemptTest(testGroupName, 5)
+
+try:
+    st.untrackPost(testOrdinal)
+except Exception as e:
+    if (str(e) == f"Post already untracked for ordinal '{testOrdinal}'"):
+        t.passCurrentTest(f"Exception Text={e}")
+    else:
+        t.failCurrentTest(f"Exception Text={e}")
+else:
+    t.failCurrentTest("No exception raised when expected")
+
+
+# Test 6: for untrackPost; checks if when attempting to untrack a post that does exist, the post is untracked
+# Expects: st.getPostTrackingEntry(testOrdinal) to return None
+reset()
+t.attemptTest(testGroupName, 6)
+
+testOrdinal = "0"
+
+# Adding some post tracking entries around the desired one to remove to ensure that only the specific post tracking entry is removed
+st.trackPost(int(testOrdinal) - 1, True, testPostLink)
+st.trackPost(int(testOrdinal), True, testPostLink)
+st.trackPost(int(testOrdinal) + 1, True, testPostLink)
+
+try:
+    st.untrackPost(testOrdinal)
+except Exception as e:
+    t.failCurrentTest(f"Exception Text={e}")
+else:
+    if (st.getPostTrackingEntry(testOrdinal) == None):
+        t.passCurrentTest("Post tracking entry succesfully removed")
+    else:
+        t.failCurrentTest(f"Failed to remove post tracking entry for ordinal '{testOrdinal}")
