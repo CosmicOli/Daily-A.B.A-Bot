@@ -319,7 +319,7 @@ else:
 reset()
 t.attemptTest(testGroupName, 15)
 
-testOrdinal = 1
+testOrdinal = "1"
 testProfileHTML = f"test Day {testOrdinal} of A.B.A posting."
 sg.postLinkPrefix = "https://google.com/"
 sg.postIDMatch = "(test)" # I have to assume that a grouping exists in the regex, as I don't see a way of making a test postIDMatch have an arbitrary amount of groupings and the code to not care
@@ -340,7 +340,7 @@ else:
 reset()
 t.attemptTest(testGroupName, 16)
 
-testOrdinal = 1
+testOrdinal = "1"
 testProfileHTML = f"test Day {testOrdinal} of A.B.A posting."
 sg.postLinkPrefix = "https://google.com/"
 sg.postIDMatch = "(test)" # I have to assume that a grouping exists in the regex, as I don't see a way of making a test postIDMatch have an arbitrary amount of groupings and the code to not care
@@ -379,8 +379,8 @@ else:
 reset()
 t.attemptTest(testGroupName, 18)
 
-testOrdinal = 1
-testProfileHTML = f"test Day {testOrdinal} of A.B.A posting. test Day {testOrdinal + 1} of A.B.A posting. test Day {testOrdinal + 2} of A.B.A posting."
+testOrdinal = "1"
+testProfileHTML = f"test Day {int(testOrdinal)} of A.B.A posting. test Day {int(testOrdinal) + 1} of A.B.A posting. test Day {int(testOrdinal) + 2} of A.B.A posting."
 sg.postLinkPrefix = "https://google.com/"
 sg.postIDMatch = "(test)" # I have to assume that a grouping exists in the regex, as I don't see a way of making a test postIDMatch have an arbitrary amount of groupings and the code to not care
 
@@ -399,13 +399,13 @@ reset()
 reset()
 t.attemptTest(testGroupName, 19)
 
-testOrdinal = 1
-testProfileHTML = f"test Day {testOrdinal} of A.B.A posting. test Day {testOrdinal + 1} of A.B.A posting. test Day {testOrdinal + 2} of A.B.A posting."
+testOrdinal = "1"
+testProfileHTML = f"test Day {int(testOrdinal)} of A.B.A posting. test Day {int(testOrdinal) + 1} of A.B.A posting. test Day {int(testOrdinal) + 2} of A.B.A posting."
 sg.postLinkPrefix = "https://google.com/"
 sg.postIDMatch = "(test)" # I have to assume that a grouping exists in the regex, as I don't see a way of making a test postIDMatch have an arbitrary amount of groupings and the code to not care
 
-st.trackPost(testOrdinal, True, testPostLink)
-st.trackPost(testOrdinal + 2, True, testPostLink)
+st.trackPost(int(testOrdinal), True, testPostLink)
+st.trackPost(int(testOrdinal) + 2, True, testPostLink)
 
 output = sd.downloadMostRecentPostsFromProfileHTML(testProfileHTML)
 
