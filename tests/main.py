@@ -6,6 +6,10 @@ os.environ["POSTS_DIRECTORY"] = f"{os.getenv("POSTS_DIRECTORY")[:-1]}_Test/"
 
 import sys
 sys.path.insert(1, './src/')
+try:
+    import scraper
+except ModuleNotFoundError:
+    sys.path.insert(1, '../src/')
 
 import tracking as t
 import utils as u
