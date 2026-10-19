@@ -106,7 +106,9 @@ async def mainLoop():
             # If the post was never tracked, this throws an exception; this is fine, hence why the exception is marked as a warning
             # The reason the post is removed from tracking is to allow for a clean attempt at downloading and sending today's post when the next timer ticks over
             try:
-                ordinal = re.search(sg.ordinalMatch, profileHTML).group(1)
+                ordinal = su.getFirstOrdinalFromText(profileHTML)
+                if (ordinal == None):
+                    raise Exception("No ordinal found in profileHTML")
                 st.untrackPost(ordinal)
                 print(f"Successfully untracked post '{ordinal}'")
             except Exception as e:

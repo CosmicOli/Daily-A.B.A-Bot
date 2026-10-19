@@ -54,7 +54,7 @@ def generateMessageContentAndImage(testOrdinal):
 
 
 # Test 1: for updateCurrentDayFromProfileHTML; checks if current day updates
-# Expects: the day to change from -1 to 280
+# Expects: the day to change from -1 to g.testOrdinal
 reset()
 t.attemptTest(testGroupName, 1)
 
@@ -64,7 +64,7 @@ try:
 except Exception as e:
     t.failCurrentTest(f"day={bg.day}, exception thrown: {e}")
 else:
-    if (bg.day == "280"):
+    if (bg.day == g.testOrdinal):
         t.passCurrentTest(f"day={bg.day}")
     else:
         t.failCurrentTest(f"day={bg.day}")

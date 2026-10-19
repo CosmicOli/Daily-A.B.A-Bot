@@ -395,6 +395,9 @@ A.B.A made by
 # The matching first link from testProfileHTML
 testPostLink = "https://x.com/EveryDayABA/status/2108023901242450274"
 
+# The matching first ordinal from testProfileHTML
+testOrdinal = "280"
+
 # The matching image link from testPostHTML
 testImageLink = "https://pbs.twimg.com/media/HUE0kKOXMAADKNu?format=jpg&name=4096x4096"
 

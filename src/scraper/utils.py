@@ -10,7 +10,7 @@ def getHTMLFromLink(link):
     return postHTML
 
 
-def getPostLinkFromHTML(profileHTML):
+def getPostLinkFromProfileHTML(profileHTML):
     postID = re.search(sg.postIDMatch, profileHTML)
     if postID:
         postLink = f"{sg.postLinkPrefix}{postID.group(1)}"
@@ -39,3 +39,12 @@ def getBodyFromPostHTML(postHTML):
             return formattedBody
         else:
             return formattedBody[:-24]
+
+
+def getFirstOrdinalFromText(text):
+    try:
+        ordinal = re.search(sg.ordinalMatch, text).group(1)
+    except AttributeError:
+        return None
+    else:
+        return ordinal

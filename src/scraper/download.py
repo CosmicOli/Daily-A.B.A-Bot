@@ -80,12 +80,11 @@ def downloadPostIfNotTracked(ordinal, postLink):
 
 
 def downloadMostRecentPostFromProfileHTML(profileHTML):
-    try:
-        ordinal = re.search(sg.ordinalMatch, profileHTML).group(1)
-    except AttributeError:
+    ordinal = su.getFirstOrdinalFromText(profileHTML)
+    if (ordinal == None):
         raise Exception("No ordinal found in profileHTML")    
 
-    postLink = su.getPostLinkFromHTML(profileHTML)
+    postLink = su.getPostLinkFromProfileHTML(profileHTML)
 
     if postLink is None:
         raise Exception("No post link found in profileHTML")
@@ -101,7 +100,7 @@ def downloadMostRecentPostsFromProfileHTML(profileHTML):
 
     output = []
     for ordinal, html in splitProfile:
-        postLink = su.getPostLinkFromHTML(html)
+        postLink = su.getPostLinkFromProfileHTML(html)
 
         if postLink is None:
             continue

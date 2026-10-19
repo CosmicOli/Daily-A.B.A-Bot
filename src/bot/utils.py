@@ -8,10 +8,11 @@ import scraper.utils as su
 
 
 def updateCurrentDayFromProfileHTML(profileHTML):
-    try:
-        bg.day = re.search(sg.ordinalMatch, profileHTML).group(1)
-    except:
+    ordinal = su.getFirstOrdinalFromText(profileHTML)
+    if (ordinal == None):
         raise Exception("Cannot find current day in profile HTML")
+    else:
+        bg.day = ordinal
 
 
 def generateMessageContent(ordinal, link):

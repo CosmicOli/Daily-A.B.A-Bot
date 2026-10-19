@@ -16,6 +16,9 @@ def reset():
     global body
     global postLink
     global imageLink
+    global testProfileHTML
+    global testPostHTML
+    global ordinal
 
     testPostLink = "link"
     output1 = None
@@ -24,6 +27,9 @@ def reset():
     body = ""
     postLink = ""
     imageLink = ""
+    testProfileHTML = g.testProfileHTML
+    testPostHTML = g.testPostHTML
+    ordinal = ""
 
     
 
@@ -64,12 +70,14 @@ else:
 
 
 
-# Test 3: for getPostLinkFromHTML; checks if the function returns None when the post link is not there
+# Test 3: for getPostLinkFromProfileHTML; checks if the function returns None when the post link is not there
 # Expects: return value of None
 reset()
 t.attemptTest(testGroupName, 3)
 
-postLink = su.getPostLinkFromHTML("")
+testProfileHTML = ""
+
+postLink = su.getPostLinkFromProfileHTML(testProfileHTML)
 
 if (postLink == None):
     t.passCurrentTest(f"postLink={postLink}")
@@ -77,12 +85,12 @@ else:
     t.failCurrentTest(f"postLink={postLink}")
 
 
-# Test 4: for getPostLinkFromHTML; checks if the function returns g.testPostLink when the post link is present
+# Test 4: for getPostLinkFromProfileHTML; checks if the function returns g.testPostLink when the post link is present
 # Expects: return value of g.testPostLink
 reset()
 t.attemptTest(testGroupName, 4)
 
-postLink = su.getPostLinkFromHTML(g.testProfileHTML)
+postLink = su.getPostLinkFromProfileHTML(testProfileHTML)
 
 if (postLink == g.testPostLink):
     t.passCurrentTest(f"postLink={postLink}")
@@ -96,7 +104,9 @@ else:
 reset()
 t.attemptTest(testGroupName, 5)
 
-imageLink = su.getImageLinkFromPostHTML("")
+testPostHTML = ""
+
+imageLink = su.getImageLinkFromPostHTML(testPostHTML)
 
 if (imageLink == None):
     t.passCurrentTest(f"imageLink={imageLink}")
@@ -109,7 +119,7 @@ else:
 reset()
 t.attemptTest(testGroupName, 6)
 
-imageLink = su.getImageLinkFromPostHTML(g.testPostHTML)
+imageLink = su.getImageLinkFromPostHTML(testPostHTML)
 
 if (imageLink == g.testImageLink):
     t.passCurrentTest(f"imageLink={imageLink}")
@@ -123,7 +133,9 @@ else:
 reset()
 t.attemptTest(testGroupName, 7)
 
-body = su.getBodyFromPostHTML("")
+testPostHTML = ""
+
+body = su.getBodyFromPostHTML(testPostHTML)
 
 if (body == None):
     t.passCurrentTest(f"body={body}")
@@ -140,7 +152,7 @@ t.attemptTest(testGroupName, 8)
 # That being said, I have added the next two instances of the function to guarantee that when no link is present and when the link is present the body is succesfully returned, as if g.testPostHTML changes it is important both parts of the test occur
 # I am hence somewhat tailoring this to the function itself (or, I guess the regex pattern), which while not ideal is necessary for proper testing
 # Congratulations this regex and the side effects, you are hence by proxy promoted to being part of the spec :confetti:
-body = su.getBodyFromPostHTML(g.testPostHTML)
+body = su.getBodyFromPostHTML(testPostHTML)
 body = su.getBodyFromPostHTML("text:\"" + body + "\"")
 body = su.getBodyFromPostHTML("text:\"" + body + " https://t.co/test1test2" + "\"")
 
@@ -149,3 +161,31 @@ if (body == g.testPostBody):
 else:
     t.failCurrentTest(f"body={body}")
 
+
+
+# Test 9: for getFirstOrdinalFromText; checks if the function returns None when no ordinal is found
+# Expects: return value of None
+reset()
+t.attemptTest(testGroupName, 9)
+
+testProfileHTML = ""
+
+ordinal = su.getFirstOrdinalFromText(testProfileHTML)
+
+if (ordinal == None):
+    t.passCurrentTest(f"ordinal={ordinal}")
+else:
+    t.failCurrentTest(f"ordinal={ordinal}")
+
+
+# Test 10: for getFirstOrdinalFromText; checks if the function returns g.testOrdinal when the input is g.testProfileHTML
+# Expects: return value of g.testOrdinal
+reset()
+t.attemptTest(testGroupName, 10)
+
+ordinal = su.getFirstOrdinalFromText(testProfileHTML)
+
+if (ordinal == g.testOrdinal):
+    t.passCurrentTest(f"ordinal={ordinal}")
+else:
+    t.failCurrentTest(f"ordinal={ordinal}")
