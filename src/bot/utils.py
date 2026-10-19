@@ -1,4 +1,3 @@
-import re
 import discord
 
 import bot.globals as bg

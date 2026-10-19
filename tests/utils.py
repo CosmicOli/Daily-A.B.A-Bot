@@ -3,7 +3,6 @@ import shutil
 
 import requests
 
-import bot.globals as bg
 import scraper.globals as sg
 
 

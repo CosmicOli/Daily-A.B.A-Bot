@@ -1,7 +1,6 @@
 import asyncio
 import datetime
 import discord
-import re
 
 import bot.globals as bg
 import bot.utils as bu
