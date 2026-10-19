@@ -41,6 +41,8 @@ def getBodyFromPostHTML(postHTML):
             return formattedBody[:-24]
 
 
+# Decided to go for "FromText" and not "FromProfileHTML" as I see there being lots of practical purpose to using this function with other inputs
+# That being said, it's not like there isn't practical purpose for the other functions, just that there is a "structure" to how the other functions interact that is denoted in their names
 def getFirstOrdinalFromText(text):
     try:
         ordinal = re.search(sg.ordinalMatch, text).group(1)
@@ -48,3 +50,7 @@ def getFirstOrdinalFromText(text):
         return None
     else:
         return ordinal
+
+
+def getOrdinalsFromText(text):
+    return re.findall(sg.ordinalMatch, text)

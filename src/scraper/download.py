@@ -95,7 +95,7 @@ def downloadMostRecentPostFromProfileHTML(profileHTML):
 
 
 def downloadMostRecentPostsFromProfileHTML(profileHTML):
-    ordinals = re.findall(sg.ordinalMatch, profileHTML)
+    ordinals = su.getOrdinalsFromText(profileHTML)
     splitProfile = zip(ordinals, re.split(sg.titleMatch, profileHTML))
 
     output = []

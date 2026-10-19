@@ -19,6 +19,7 @@ def reset():
     global testProfileHTML
     global testPostHTML
     global ordinal
+    global ordinals
 
     testPostLink = "link"
     output1 = None
@@ -30,6 +31,7 @@ def reset():
     testProfileHTML = g.testProfileHTML
     testPostHTML = g.testPostHTML
     ordinal = ""
+    ordinals = [""]
 
     
 
@@ -189,3 +191,33 @@ if (ordinal == g.testOrdinal):
     t.passCurrentTest(f"ordinal={ordinal}")
 else:
     t.failCurrentTest(f"ordinal={ordinal}")
+
+
+# Test 11: for getOrdinalsFromText; checks if the function returns [] when no ordinal is found
+# Expects: return value of []
+reset()
+t.attemptTest(testGroupName, 11)
+
+testProfileHTML = ""
+
+ordinals = su.getOrdinalsFromText(testProfileHTML)
+
+if (ordinals == []):
+    t.passCurrentTest(f"ordinals={ordinals}")
+else:
+    t.failCurrentTest(f"ordinals={ordinals}")
+
+
+# Test 12: for getOrdinalsFromText; checks if the function returns a list of ordinals corresponding to the ordinals in the text
+# Expects: return value of ["1","3","2"]
+reset()
+t.attemptTest(testGroupName, 12)
+
+testProfileHTML = "Day 1 of A.B.A posting. Day 3 of A.B.A posting. Day 2 of A.B.A posting."
+
+ordinals = su.getOrdinalsFromText(testProfileHTML)
+
+if (ordinals == ["1","3","2"]):
+    t.passCurrentTest(f"ordinals={ordinals}")
+else:
+    t.failCurrentTest(f"ordinals={ordinals}")
