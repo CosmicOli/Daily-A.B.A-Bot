@@ -2,7 +2,6 @@ import globals as g
 import tracking as t
 import utils as u
 
-import scraper.globals as sg
 import scraper.utils as su
 
 testGroupName = "utils"
@@ -10,28 +9,21 @@ testGroupName = "utils"
 def reset():
     u.reset()
 
-    global testOrdinal
     global testPostLink
     global output1
     global output2
     global file
-    global postTrackerFileContents
     global body
     global postLink
     global imageLink
 
-    testOrdinal = "test"
     testPostLink = "link"
     output1 = None
     output2 = None
     file = None
-    postTrackerFileContents = None
     body = ""
     postLink = ""
     imageLink = ""
-
-    sg.postLinkPrefix = "https://x.com/EveryDayABA/status/"
-    sg.postIDMatch = "data-href=\"/EveryDayABA/status/(\\d+)\""
 
     
 
