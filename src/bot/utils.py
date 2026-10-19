@@ -7,7 +7,7 @@ import scraper.tracker as st
 import scraper.utils as su
 
 
-def updateCurrentDayFromProfileHTML(profileHTML):
+def updateCurrentDayFromProfileHTML(profileHTML: str):
     ordinal = su.getFirstOrdinalFromText(profileHTML)
     if (ordinal == None):
         raise Exception("Cannot find current day in profile HTML")
@@ -15,7 +15,7 @@ def updateCurrentDayFromProfileHTML(profileHTML):
         bg.day = ordinal
 
 
-def generateMessageContent(ordinal, link):
+def generateMessageContent(ordinal: str, link: str):
     try:
         bodyFile = open(f"{sg.postsDirectory}{ordinal}.txt", encoding="utf-8")
         body = bodyFile.read()
@@ -28,7 +28,7 @@ def generateMessageContent(ordinal, link):
     return f"{body}\n{link}"
 
 
-def generateMessageImage(ordinal, expectingImage):
+def generateMessageImage(ordinal: str, expectingImage: str):
     if (expectingImage == "True"):
         try:
             image = discord.File(f"{sg.postsDirectory}{ordinal}.jpg")
@@ -41,7 +41,7 @@ def generateMessageImage(ordinal, expectingImage):
     return image
 
 
-def generateMessageContentAndImage(ordinal):
+def generateMessageContentAndImage(ordinal: str):
     entry = st.getPostTrackingEntry(ordinal)
     if (entry is None):
         raise Exception(f"No entry associated with '{ordinal}'")

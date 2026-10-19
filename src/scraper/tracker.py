@@ -5,7 +5,7 @@ import scraper.globals as sg
 # Next time I'll use pandas or something I promise lol
 
 
-def getPostTrackingEntry(ordinal):
+def getPostTrackingEntry(ordinal: str):
     file = open(sg.postTrackerFile, "r")
     lines = file.readlines()
     file.close()
@@ -20,7 +20,7 @@ def getPostTrackingEntry(ordinal):
     return entry
 
 
-def trackPost(ordinal, imageExists, link):
+def trackPost(ordinal: str, imageExists: bool, link: str):
     if (not getPostTrackingEntry(ordinal) is None):
         raise Exception(f"Post already tracked for ordinal '{ordinal}'")
 
@@ -29,7 +29,7 @@ def trackPost(ordinal, imageExists, link):
     file.close()
 
 
-def untrackPost(ordinal):
+def untrackPost(ordinal: str):
     entry = getPostTrackingEntry(ordinal)
     if (entry is None):
         raise Exception(f"Post already untracked for ordinal '{ordinal}'")

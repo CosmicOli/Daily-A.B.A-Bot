@@ -6,7 +6,7 @@ import scraper.tracker as st
 import scraper.utils as su
 
 
-def downloadImageFromLink(format, imageLink, title):
+def downloadImageFromLink(format: str, imageLink: str, title: str):
     imageFile = open(f"{sg.postsDirectory}{title}.{format}", "wb")
 
     request = requests.get(imageLink, headers=sg.headers)
@@ -19,7 +19,7 @@ def downloadImageFromLink(format, imageLink, title):
     imageFile.close()
 
 
-def downloadPostBodyFromHTML(html, title):
+def downloadPostBodyFromHTML(html: str, title: str):
     postBody = su.getBodyFromPostHTML(html)
     if (not postBody is None):
         body = open(f"{sg.postsDirectory}{title}.txt", "w", encoding="utf-8")
@@ -29,12 +29,12 @@ def downloadPostBodyFromHTML(html, title):
         raise Exception("No post body found in HTML")
 
 
-def downloadPostBodyFromLink(link, title):
+def downloadPostBodyFromLink(link: str, title: str):
     # NOTE: This raises an exception if no post body is found
     downloadPostBodyFromHTML(su.getHTMLFromLink(link), title)
 
 
-def downloadPost(ordinal, postLink):
+def downloadPost(ordinal: str, postLink: str):
     # NOTE: This raises an exception if the postLink is invalid
     postHTML = su.getHTMLFromLink(postLink)
     imageLink = su.getImageLinkFromPostHTML(postHTML)
@@ -65,7 +65,7 @@ def downloadPost(ordinal, postLink):
 
 
 # flag is 0 when a post is downloaded, or -1 when a post is already tracked
-def downloadPostIfNotTracked(ordinal, postLink):
+def downloadPostIfNotTracked(ordinal: str, postLink: str):
     flag = -1
     
     if (not st.getPostTrackingEntry(ordinal)):
@@ -79,7 +79,7 @@ def downloadPostIfNotTracked(ordinal, postLink):
     return flag
 
 
-def downloadMostRecentPostFromProfileHTML(profileHTML):
+def downloadMostRecentPostFromProfileHTML(profileHTML: str):
     ordinal = su.getFirstOrdinalFromText(profileHTML)
     if (ordinal == None):
         raise Exception("No ordinal found in profileHTML")    
@@ -94,7 +94,7 @@ def downloadMostRecentPostFromProfileHTML(profileHTML):
     return downloadPostIfNotTracked(ordinal, postLink)
 
 
-def downloadMostRecentPostsFromProfileHTML(profileHTML):
+def downloadMostRecentPostsFromProfileHTML(profileHTML: str):
     ordinals = su.getOrdinalsFromText(profileHTML)
     splitProfile = zip(ordinals, re.split(sg.titleMatch, profileHTML))
 

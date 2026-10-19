@@ -5,7 +5,7 @@ currentTestNumber = 0
 currentTestGroupName = ""
 currentTestFailed = False
 
-def attemptTest(testGroupName, testNumber):
+def attemptTest(testGroupName: str, testNumber: int):
     global currentTestNumber
     currentTestNumber = testNumber
     global currentTestGroupName
@@ -27,10 +27,10 @@ def failCurrentTest(variable):
         currentTestFailed = True
         print(f"Test group '{currentTestGroupName}' test '{currentTestNumber}' failed: {variable}\n")
 
-def passTest(testGroupName, testNumber, variable):
+def passTest(testGroupName: str, testNumber: int, variable):
     global passed
     passed += 1
     print(f"Test group '{testGroupName}' test '{testNumber}' passed: {variable}\n")
 
-def failTest(testGroupName, testNumber, variable):
+def failTest(testGroupName: str, testNumber: int, variable):
     print(f"Test group '{testGroupName}' test '{testNumber}' failed: {variable}\n")

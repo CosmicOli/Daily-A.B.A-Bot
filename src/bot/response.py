@@ -10,7 +10,7 @@ import scraper.globals as sg
 import scraper.tracker as st
 import scraper.utils as su
 
-async def sendMessageToChannel(channel, content, image):
+async def sendMessageToChannel(channel: discord.channel, content: str, image: discord.File):
     if (image is None):
         message = await channel.send(content=content)
     else:
@@ -21,7 +21,7 @@ async def sendMessageToChannel(channel, content, image):
 # NOTE: When this function fails to send a post to a channel, the channel is removed from the bound list
 # This ensures it cannot get cluttered with non existent channels, and also that all channels are attempted to be sent to without erroring out on a failed send attempt
 # I also don't make it error out to the main loop as that would lead to channels receiving repeat posts; I could make a system that tracks which channels have been sent what posts and only send posts to channels that haven't recieved today's post, but I don't really want to tbh
-async def sendPostToChannels(ordinal):
+async def sendPostToChannels(ordinal: str):
     entry = st.getPostTrackingEntry(ordinal)
     if (entry is None):
         raise Exception(f"No entry associated with '{ordinal}'")

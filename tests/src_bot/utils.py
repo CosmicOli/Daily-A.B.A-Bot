@@ -35,7 +35,7 @@ def reset():
 
 # As st.trackPost can throw an exception, in most cases the test should fail if an exception is thrown
 # This function factors out handling the exception in every test where relevant
-def trackPost(testOrdinal, imageExists, link):
+def trackPost(testOrdinal: str, imageExists: bool, link: str):
     try:
         st.trackPost(testOrdinal, imageExists, link)
     except Exception as e:
@@ -43,7 +43,7 @@ def trackPost(testOrdinal, imageExists, link):
 
 # As bu.generateMessageContentAndImage can throw an exception, in most cases the test should fail if an exception is thrown
 # This function factors out handling the exception in every test where relevant
-def generateMessageContentAndImage(testOrdinal):
+def generateMessageContentAndImage(testOrdinal: str):
     try:
         content, image = bu.generateMessageContentAndImage(testOrdinal)
     except Exception as e:

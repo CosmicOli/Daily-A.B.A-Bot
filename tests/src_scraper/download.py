@@ -250,7 +250,7 @@ else:
 
 
 # This is used for tests where downloadMostRecentPostFromProfileHTML is expected to throw exceptions
-def testForSpecificException_downloadMostRecentPostFromProfileHTML(exceptionText):
+def testForSpecificException_downloadMostRecentPostFromProfileHTML(exceptionText: str):
     try:
         sd.downloadMostRecentPostFromProfileHTML(testProfileHTML)
     except Exception as e:
