@@ -10,7 +10,7 @@ import scraper.globals as sg
 import scraper.tracker as st
 import scraper.utils as su
 
-async def sendMessageToChannel(channel: discord.channel, content: str, image: discord.File):
+async def sendMessageToChannel(channel: discord.channel, content: str, image: discord.File | None):
     if (image is None):
         message = await channel.send(content=content)
     else:
@@ -55,7 +55,7 @@ async def sendPostToChannels(ordinal: str):
             print(f"Exception Text={e}")
 
 
-async def respondWithPost(interaction: discord.Interaction, content: str, image: discord.File):
+async def respondWithPost(interaction: discord.Interaction, content: str, image: discord.File | None):
     if (image is None):
         await interaction.response.send_message(content=content)
     else:

@@ -65,7 +65,7 @@ def downloadPost(ordinal: str, postLink: str):
 
 
 # flag is 0 when a post is downloaded, or -1 when a post is already tracked
-def downloadPostIfNotTracked(ordinal: str, postLink: str):
+def downloadPostIfNotTracked(ordinal: str, postLink: str) -> int:
     flag = -1
     
     if (not st.getPostTrackingEntry(ordinal)):
@@ -79,7 +79,7 @@ def downloadPostIfNotTracked(ordinal: str, postLink: str):
     return flag
 
 
-def downloadMostRecentPostFromProfileHTML(profileHTML: str):
+def downloadMostRecentPostFromProfileHTML(profileHTML: str) -> int:
     ordinal = su.getFirstOrdinalFromText(profileHTML)
     if (ordinal == None):
         raise Exception("No ordinal found in profileHTML")    
@@ -94,7 +94,7 @@ def downloadMostRecentPostFromProfileHTML(profileHTML: str):
     return downloadPostIfNotTracked(ordinal, postLink)
 
 
-def downloadMostRecentPostsFromProfileHTML(profileHTML: str):
+def downloadMostRecentPostsFromProfileHTML(profileHTML: str) -> list[int]:
     ordinals = su.getOrdinalsFromText(profileHTML)
     splitProfile = zip(ordinals, re.split(sg.titleMatch, profileHTML))
 

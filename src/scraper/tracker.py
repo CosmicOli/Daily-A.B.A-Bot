@@ -5,7 +5,7 @@ import scraper.globals as sg
 # Next time I'll use pandas or something I promise lol
 
 
-def getPostTrackingEntry(ordinal: str):
+def getPostTrackingEntry(ordinal: str) -> (list[str] | None):
     file = open(sg.postTrackerFile, "r")
     lines = file.readlines()
     file.close()

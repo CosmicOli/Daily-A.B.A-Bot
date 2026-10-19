@@ -43,7 +43,7 @@ def trackPost(testOrdinal: str, imageExists: bool, link: str):
 
 # As bu.generateMessageContentAndImage can throw an exception, in most cases the test should fail if an exception is thrown
 # This function factors out handling the exception in every test where relevant
-def generateMessageContentAndImage(testOrdinal: str):
+def generateMessageContentAndImage(testOrdinal: str) -> tuple[str, (discord.File | None)]:
     try:
         content, image = bu.generateMessageContentAndImage(testOrdinal)
     except Exception as e:

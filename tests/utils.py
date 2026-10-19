@@ -9,7 +9,7 @@ import scraper.globals as sg
 
 # To avoid the test script requiring manual setup or git tracked reference files, I am using this function that is as of implementation identical to the one in the main script
 # Based on manual testing I would say this works (at least for now), so I deem it 'good enough' to be used to pull a reference image for testing purposes
-def downloadReferenceImageFromLink(format, imageLink, title):
+def downloadReferenceImageFromLink(format: str, imageLink: str, title: str):
     imageFile = open(f"{sg.postsDirectory}{title}.{format}", "wb")
 
     request = requests.get(imageLink, headers=sg.headers)

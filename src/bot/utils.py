@@ -15,7 +15,7 @@ def updateCurrentDayFromProfileHTML(profileHTML: str):
         bg.day = ordinal
 
 
-def generateMessageContent(ordinal: str, link: str):
+def generateMessageContent(ordinal: str, link: str) -> str:
     try:
         bodyFile = open(f"{sg.postsDirectory}{ordinal}.txt", encoding="utf-8")
         body = bodyFile.read()
@@ -28,7 +28,7 @@ def generateMessageContent(ordinal: str, link: str):
     return f"{body}\n{link}"
 
 
-def generateMessageImage(ordinal: str, expectingImage: str):
+def generateMessageImage(ordinal: str, expectingImage: str) -> (discord.File | None):
     if (expectingImage == "True"):
         try:
             image = discord.File(f"{sg.postsDirectory}{ordinal}.jpg")
@@ -41,7 +41,7 @@ def generateMessageImage(ordinal: str, expectingImage: str):
     return image
 
 
-def generateMessageContentAndImage(ordinal: str):
+def generateMessageContentAndImage(ordinal: str) -> tuple[str, (discord.File | None)]:
     entry = st.getPostTrackingEntry(ordinal)
     if (entry is None):
         raise Exception(f"No entry associated with '{ordinal}'")

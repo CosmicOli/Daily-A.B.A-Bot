@@ -4,13 +4,13 @@ import requests
 
 import scraper.globals as sg
 
-def getHTMLFromLink(link: str):
+def getHTMLFromLink(link: str) -> str:
     requestForPostHTML = requests.get(link, headers=sg.headers)
     postHTML = requestForPostHTML.content.decode("utf-8")
     return postHTML
 
 
-def getPostLinkFromProfileHTML(profileHTML: str):
+def getPostLinkFromProfileHTML(profileHTML: str) -> (str | None):
     postID = re.search(sg.postIDMatch, profileHTML)
     if postID:
         postLink = f"{sg.postLinkPrefix}{postID.group(1)}"
@@ -19,7 +19,7 @@ def getPostLinkFromProfileHTML(profileHTML: str):
     return postLink
 
 
-def getImageLinkFromPostHTML(postHTML: str):
+def getImageLinkFromPostHTML(postHTML: str) -> (str | None):
     imagePartialLink = re.search(sg.imagePartialLinkMatch, postHTML)
     if (imagePartialLink is None):
         return None
@@ -27,7 +27,7 @@ def getImageLinkFromPostHTML(postHTML: str):
     return imageLink
 
 
-def getBodyFromPostHTML(postHTML: str):
+def getBodyFromPostHTML(postHTML: str) -> (str | None):
     postBody = re.search(sg.postBodyMatch, postHTML)
     if (postBody is None):
         return None
@@ -43,7 +43,7 @@ def getBodyFromPostHTML(postHTML: str):
 
 # Decided to go for "FromText" and not "FromProfileHTML" as I see there being lots of practical purpose to using this function with other inputs
 # That being said, it's not like there isn't practical purpose for the other functions, just that there is a "structure" to how the other functions interact that is denoted in their names
-def getFirstOrdinalFromText(text: str):
+def getFirstOrdinalFromText(text: str) -> (str | None):
     try:
         ordinal = re.search(sg.ordinalMatch, text).group(1)
     except AttributeError:
@@ -52,5 +52,5 @@ def getFirstOrdinalFromText(text: str):
         return ordinal
 
 
-def getOrdinalsFromText(text: str):
+def getOrdinalsFromText(text: str) -> list[str]:
     return re.findall(sg.ordinalMatch, text)
